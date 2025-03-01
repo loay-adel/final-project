@@ -1,7 +1,4 @@
-<<<<<<< Updated upstream
 const Home = () => {
-  return <div>this is the main page</div>;
-=======
 import { List, ListItem, Card } from "@material-tailwind/react";
 import {
   Carousel,
@@ -254,7 +251,6 @@ const Home = () => {
       </div>
     </div>
   );
->>>>>>> Stashed changes
-};
+};}
 
 export default Home;
