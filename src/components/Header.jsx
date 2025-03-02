@@ -63,34 +63,27 @@ const Header = () => {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
+
   return (
-<<<<<<< Updated upstream
     <Navbar className="mx-auto max-w-screen-xl px-4 py-2 lg:px-8 lg:py-4">
-=======
-    <Navbar className=" px-4 py-2 lg:px-8 lg:py-4">
->>>>>>> Stashed changes
       <div className="container mx-auto flex flex-wrap items-center justify-between text-black">
         <Typography
           as="a"
           href="#"
-          className="mr-4 cursor-pointer py-1.5  text-black font-bold text-xl"
+          className="mr-4 cursor-pointer py-1.5 text-black font-bold text-xl"
         >
           Exclusive
         </Typography>
         <div className="hidden lg:block">{navList}</div>
         <div className="hidden items-center gap-x-2 lg:flex">
-<<<<<<< Updated upstream
           <div className="relative flex w-full gap-2 md:w-max rounded-2xl">
-=======
-          <div className="relative flex w-full gap-2 md:w-max ">
->>>>>>> Stashed changes
             <Input
               type="search"
               placeholder="What are you looking for"
               containerProps={{
-                className: "min-w-[288px] bg-[#F5F5F5] rounded-2xl ",
+                className: "min-w-[288px] bg-[#F5F5F5] rounded-2xl",
               }}
-              className="  border-none rounded-5xl pl-9 placeholder:text-black  focus:border-2"
+              className="border-none rounded-5xl pl-9 placeholder:text-black focus:border-2"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
@@ -117,11 +110,7 @@ const Header = () => {
               </svg>
             </div>
           </div>
-
           <IoCartOutline className="text-3xl ml-1.5" />
-          {/* <Button size="md" className="rounded-lg ">
-            Search
-          </Button> */}
         </div>
         <IconButton
           variant="text"
@@ -165,11 +154,7 @@ const Header = () => {
         <div className="container mx-auto">
           {navList}
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
-<<<<<<< Updated upstream
             <div className="relative w-full gap-2 md:w-max rounded-2xl">
-=======
-            <div className="relative w-full gap-2 md:w-max ">
->>>>>>> Stashed changes
               <Input
                 type="search"
                 placeholder="What are you looking for"
@@ -177,7 +162,7 @@ const Header = () => {
                   className:
                     "min-w-[288px] bg-[#F5F5F5] rounded-2xl text-black",
                 }}
-                className="  border-none rounded-5xl pl-9 placeholder:text-black  focus:border-2"
+                className="border-none rounded-5xl pl-9 placeholder:text-black focus:border-2"
                 labelProps={{
                   className: "before:content-none after:content-none",
                 }}
@@ -204,12 +189,7 @@ const Header = () => {
                 </svg>
               </div>
             </div>
-
             <IoCartOutline className="text-3xl text-black mt-1.5" />
-
-            {/* <Button size="md" className="mt-1 rounded-lg sm:mt-0">
-              Search
-            </Button> */}
           </div>
         </div>
       </Collapse>

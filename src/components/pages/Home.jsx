@@ -1,4 +1,3 @@
-const Home = () => {
 import { List, ListItem, Card } from "@material-tailwind/react";
 import {
   Carousel,
@@ -251,6 +250,6 @@ const Home = () => {
       </div>
     </div>
   );
-};}
+};
 
 export default Home;
