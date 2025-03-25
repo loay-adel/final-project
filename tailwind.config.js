@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const withMT = require("@material-tailwind/react/utils/withMT");
 
 /** @type {import('tailwindcss').Config} */
@@ -12,8 +13,13 @@ module.exports = withMT({
     extend: {
       colors: {
         main: "#DB4444",
+        sec: "#F5F5F5",
+      },
+      fontFamily: {
+        mainFont: ["Poppins", "sans-serif"],
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 });
+/* eslint-enable no-undef */

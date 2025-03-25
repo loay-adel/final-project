@@ -37,7 +37,7 @@ const Home = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  });
 
   const scrollContainer = useRef(null);
   const scroll = (direction) => {
@@ -51,7 +51,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container mt-3.5 mx-auto">
+    <div className="container mt-3.5 mx-auto font-mainFont">
       <div className="flex flex-col justify-between mb-20 md:flex-row md:h-[50vh]">
         <div className="w-[20%]">
           {" "}
@@ -157,10 +157,10 @@ const Home = () => {
           </Carousel>
         </div>
       </div>
-      <div>
+      <div className="md:mt-40">
         <div className="flex flex-row">
           <span className="d-block bg-main rounded w-6"></span>
-          <h1 className="text-4xl text-main ml-2.5">Today's</h1>
+          <h1 className="text-4xl text-main ml-2.5  font-mainFont">Today's</h1>
         </div>
         <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
           <h1 className="font-bold">Flash Sales</h1>
@@ -203,13 +203,15 @@ const Home = () => {
             {Array.from({ length: 10 }).map((_, index) => (
               <div
                 key={index}
-                className="bg-white p-4 rounded-lg shadow-lg text-center w-60 min-w-[240px]"
+                className="bg-white p-4 rounded-lg  text-center w-60 min-w-[240px]"
               >
-                <img
-                  src="./controller.png"
-                  alt={`Product ${index + 1}`}
-                  className="h-32 rounded-md w-full mb-2 object-cover"
-                />
+                <div className="w-full bg-sec">
+                  <img
+                    src="./controller.png"
+                    alt={`Product ${index + 1}`}
+                    className="h-32 rounded-md w-full mb-2 object-cover"
+                  />
+                </div>
                 <div className="flex flex-col gap-2 items-start">
                   <p className="">HAVIT HV-G92 Gamepad</p>
                   <div className="flex gap-3">
