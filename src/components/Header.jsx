@@ -11,46 +11,21 @@ import { IoCartOutline } from "react-icons/io5";
 
 const navList = (
   <ul className="flex flex-col gap-2 lg:flex-row lg:gap-6 lg:items-center lg:mb-0 lg:mt-0 mb-4 mt-2">
-    <Typography
-      as="li"
-      variant="h4"
-      color="black"
-      className="flex p-1 font-medium gap-x-2 items-center"
-    >
-      <Link to="/" className="flex active:border-b-2 items-center">
-        Home
-      </Link>
-    </Typography>
-    <Typography
-      as="li"
-      variant="small"
-      color="black"
-      className="flex p-1 font-medium gap-x-2 items-center"
-    >
-      <Link to="/contact" className="flex items-center">
-        Contact
-      </Link>
-    </Typography>
-    <Typography
-      as="li"
-      variant="small"
-      color="black"
-      className="flex p-1 font-medium gap-x-2 items-center"
-    >
-      <Link to="/about" className="flex items-center">
-        About
-      </Link>
-    </Typography>
-    <Typography
-      as="li"
-      variant="small"
-      color="black"
-      className="flex p-1 font-medium gap-x-2 items-center"
-    >
-      <Link to="/signup" className="flex items-center">
-        Signup
-      </Link>
-    </Typography>
+    <Link to="/" className="flex active:border-b-2 items-center">
+      Home
+    </Link>
+
+    <Link to="/contact" className="flex items-center">
+      Contact
+    </Link>
+
+    <Link to="/about" className="flex items-center">
+      About
+    </Link>
+
+    <Link to="/signup" className="flex items-center">
+      Signup
+    </Link>
   </ul>
 );
 
@@ -65,7 +40,7 @@ const Header = () => {
   }, []);
 
   return (
-    <Navbar className="lg:px-8 lg:py-4 max-w-screen-xl mx-auto px-4 py-2">
+    <Navbar fullWidth className="lg:px-8 lg:py-4  mx-auto px-4 py-2">
       <div className="container flex flex-wrap justify-between text-black items-center mx-auto">
         <Typography
           as="a"

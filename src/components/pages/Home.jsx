@@ -7,12 +7,14 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
-  const targetDate = new Date("2025-02-28T23:59:59"); // Set your target date here
-  const [timeLeft] = useState(getTimeLeft(targetDate));
+  const targetDate = new Date("2025-03-28T23:59:59"); // Set your target date here
+  const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
   const [rated, setRated] = useState(4);
+
   function getTimeLeft(target) {
     const now = new Date();
     const difference = target - now;
@@ -28,6 +30,15 @@ const Home = () => {
       seconds: Math.floor((difference / 1000) % 60),
     };
   }
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeLeft(targetDate));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const scrollContainer = useRef(null);
   const scroll = (direction) => {
     if (scrollContainer.current) {
@@ -219,7 +230,9 @@ const Home = () => {
             ))}
           </div>
           <div className="flex justify-center mb-2 mt-4">
-            <Button className="bg-main px-12 py-5">View All Products</Button>
+            <Link to="/product">
+              <Button className="bg-main px-12 py-5">View All Products</Button>
+            </Link>
           </div>
         </div>
         <div className="bg-gray-300 h-[2px] w-full my-10"></div>
