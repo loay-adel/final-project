@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
-
+import { FaRegHeart } from "react-icons/fa";
 const navList = (
   <ul className="flex flex-col gap-2 lg:flex-row lg:gap-6 lg:items-center lg:mb-0 lg:mt-0 mb-4 mt-2">
     <Link to="/" className="flex active:border-b-2 items-center">
@@ -38,7 +38,7 @@ const Header = () => {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-
+  const [cartCount, setCartCount] = useState(0);
   return (
     <Navbar fullWidth className="lg:px-8 lg:py-4  mx-auto px-4 py-2">
       <div className="container flex flex-wrap justify-between text-black items-center mx-auto">
@@ -85,8 +85,12 @@ const Header = () => {
               </svg>
             </div>
           </div>
-          <IoCartOutline className="text-3xl ml-1.5" />
+          <div className="flex items-center gap-4 ml-4">
+            <FaRegHeart className="text-2xl  " />
+            <IoCartOutline className="text-3xl " />
+          </div>
         </div>
+
         <IconButton
           variant="text"
           className="h-6 text-inherit w-6 active:bg-transparent focus:bg-transparent hover:bg-transparent lg:hidden ml-auto"
@@ -124,9 +128,18 @@ const Header = () => {
             </svg>
           )}
         </IconButton>
+        <div className="flex items-center gap-4 ml-4 relative">
+          <IoCartOutline className="text-3xl " />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+              {cartCount}
+            </span>
+          )}
+        </div>
       </div>
+
       <Collapse open={openNav}>
-        <div className="container mx-auto">
+        <div className="container mx-auto text-black">
           {navList}
           <div className="flex flex-col gap-x-2 sm:flex-row sm:items-center">
             <div className="rounded-2xl w-full gap-2 md:w-max relative">
@@ -164,7 +177,6 @@ const Header = () => {
                 </svg>
               </div>
             </div>
-            <IoCartOutline className="text-3xl text-black mt-1.5" />
           </div>
         </div>
       </Collapse>
