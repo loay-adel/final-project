@@ -3,7 +3,7 @@ import Cart from "./components/pages/Cart";
 import Checkout from "./components/pages/Checkout";
 import Contact from "./components/pages/Contact";
 import Error from "./components/pages/error";
-import Product from "./components/pages/Product";
+import Product from "./components/pages/Product/Product";
 import Signin from "./components/pages/Signin";
 import Signup from "./components/pages/Signup";
 import Wishlist from "./components/pages/Wishlist";
@@ -23,7 +23,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<Error />} />
-        <Route path="/product" element={<Product />} />
+        <Route path="/product/:categoryName/:typeOfProduct/:product/:id" element={<Product />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/wishlist" element={<Wishlist />} />
