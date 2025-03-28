@@ -21,7 +21,7 @@ import { Link } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 
 const Home = () => {
-  const targetDate = new Date("2025-03-28T23:59:59"); // Set your target date here
+  const targetDate = new Date("2025-03-29T23:59:59"); // Set your target date here
   const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
   const [rated, setRated] = useState(4);
 
@@ -99,13 +99,14 @@ const Home = () => {
         </div>
         <div className="w-full md:w-[75%]">
           <Carousel
-            className="rounded-xl w-full"
+            className="rounded-xl w-full mt-6 md:mt-0 "
             prevArrow={({ handlePrev }) => (
               <IconButton
                 variant="text"
                 color="white"
                 size="lg"
                 onClick={handlePrev}
+                aria-label="show previous picture"
                 className="-translate-y-2/4 !absolute left-4 top-2/4"
               >
                 <svg
@@ -127,6 +128,7 @@ const Home = () => {
             nextArrow={({ handleNext }) => (
               <IconButton
                 variant="text"
+                aria-label="show next picture"
                 color="white"
                 size="lg"
                 onClick={handleNext}
@@ -172,7 +174,7 @@ const Home = () => {
       </div>
       <div className="md:mt-40">
         <div className="flex flex-row">
-          <span className="d-block bg-main rounded w-6"></span>
+          <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
           <h1 className="text-4xl text-main ml-2.5  font-mainFont">Today's</h1>
         </div>
         <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
@@ -223,11 +225,17 @@ const Home = () => {
                     -35%
                   </span>
                   <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
-                    <button className="  rounded-full z-10">
+                    <button
+                      aria-label="add product to wishlist"
+                      className="  rounded-full z-10"
+                    >
                       <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
                     </button>
 
-                    <button className="   rounded-full z-10">
+                    <button
+                      aria-label="show product"
+                      className="   rounded-full z-10"
+                    >
                       <IoMdEye className="text-2xl hover:scale-110 " />
                     </button>
                   </div>
@@ -238,7 +246,10 @@ const Home = () => {
                       alt={`Product ${index + 1}`}
                       className=" rounded-md   object-contain"
                     />
-                    <button className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <button
+                      aria-label="add to cart"
+                      className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    >
                       <p>Add to Cart</p>
                     </button>
                   </div>
@@ -276,7 +287,7 @@ const Home = () => {
         </div>
         <div className="bg-gray-300 h-[2px] w-full my-10"></div>
         <div className="flex flex-row">
-          <span className="d-block bg-main rounded w-6"></span>
+          <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
           <h1 className="text-4xl text-main ml-2.5">Categories</h1>
         </div>
         <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
@@ -298,7 +309,7 @@ const Home = () => {
       </div>
       <div className="bg-gray-300 h-[2px] w-full my-10"></div>
       <div className="flex flex-row">
-        <span className="d-block bg-main rounded w-6"></span>
+        <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
         <h1 className="text-4xl text-main ml-2.5">This Month</h1>
       </div>
       <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
@@ -315,18 +326,24 @@ const Home = () => {
         {Array.from({ length: 10 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white p-4 rounded-lg  text-center  min-w-[16em] group hover:cursor-pointer "
+            className="bg-white p-4 rounded-lg  text-center   min-w-[16em] group hover:cursor-pointer "
           >
             <div className="w-full bg-sec h-64  relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
                 -35%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
-                <button className="  rounded-full z-10">
+                <button
+                  aria-label="add product to wishlist"
+                  className="  rounded-full z-10"
+                >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
                 </button>
 
-                <button className="   rounded-full z-10">
+                <button
+                  aria-label="show product "
+                  className="   rounded-full z-10"
+                >
                   <IoMdEye className="text-2xl hover:scale-110 " />
                 </button>
               </div>
@@ -368,12 +385,12 @@ const Home = () => {
         </Link>
       </div>
 
-      <div className="mt-20">
+      <div className="mt-20 w-full">
         <img src="/ad.png" alt="" loading="lazy" />
       </div>
 
       <div className="flex flex-row mt-10">
-        <span className="d-block bg-main rounded w-6"></span>
+        <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
         <h1 className="text-4xl text-main ml-2.5">Our Products</h1>
       </div>
       <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
@@ -394,7 +411,7 @@ const Home = () => {
       </div>
       <div
         ref={scrollContainer}
-        className="flex p-4 flex-wrap justify-center md:justify-normal gap-4 md:gap-0 scroll-smooth scrollbar-hide space-x-4"
+        className="grid grid-cols-2  md:grid-cols-4 mt-4   justify-center  gap-4 md:gap-0 scroll-smooth scrollbar-hide space-x-4"
       >
         {Array.from({ length: 8 }).map((_, index) => (
           <div
@@ -406,11 +423,17 @@ const Home = () => {
                 -35%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
-                <button className="  rounded-full z-10">
+                <button
+                  aria-label="add product to wishlist"
+                  className="  rounded-full z-10"
+                >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
                 </button>
 
-                <button className="   rounded-full z-10">
+                <button
+                  aria-label="show product"
+                  className="   rounded-full z-10"
+                >
                   <IoMdEye className="text-2xl hover:scale-110 " />
                 </button>
               </div>
@@ -452,7 +475,7 @@ const Home = () => {
         </Link>
       </div>
       <div className="flex flex-row mt-10">
-        <span className="d-block bg-main rounded w-6"></span>
+        <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
         <h1 className="text-4xl text-main ml-2.5">Featured</h1>
       </div>
       <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
@@ -463,7 +486,7 @@ const Home = () => {
       </div>
       {/* grid gallary */}
       <div className=" mx-auto py-6">
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* PlayStation 5 - Larger item spanning two rows */}
           <div className="col-span-2 md:col-span-6 md:row-span-2 relative group bg-black flex items-end">
             <img
@@ -506,7 +529,7 @@ const Home = () => {
             <img
               src="/speakers.png"
               alt="Speakers"
-              className=" object-contain scale-[1.4]"
+              className=" object-contain md:scale-[1.4]"
             />
 
             <div className="absolute inset-0  flex flex-col justify-end p-4 text-white items-start gap-5">
