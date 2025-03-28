@@ -38,7 +38,7 @@ const Header = () => {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartCount, setCartCount] = useState(2);
   return (
     <Navbar fullWidth className="lg:px-8 lg:py-4  mx-auto px-4 py-2">
       <div className="container flex flex-wrap justify-between text-black items-center mx-auto">
@@ -86,8 +86,23 @@ const Header = () => {
             </div>
           </div>
           <div className="flex items-center gap-4 ml-4">
-            <FaRegHeart className="text-2xl  " />
-            <IoCartOutline className="text-3xl " />
+            <div className="flex items-center gap-4 ml-4 relative">
+              <FaRegHeart className="text-2xl hover:scale-105 hover:cursor-pointer " />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-4 ml-4 relative">
+              <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  {cartCount}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -128,14 +143,6 @@ const Header = () => {
             </svg>
           )}
         </IconButton>
-        <div className="flex items-center gap-4 ml-4 relative">
-          <IoCartOutline className="text-3xl " />
-          {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {cartCount}
-            </span>
-          )}
-        </div>
       </div>
 
       <Collapse open={openNav}>

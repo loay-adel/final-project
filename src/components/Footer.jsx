@@ -1,5 +1,5 @@
 import { Typography } from "@material-tailwind/react";
-import React from "react";
+import { useState } from "react";
 import { Input, Button } from "@material-tailwind/react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaLinkedinIn, FaFacebookF, FaInstagram } from "react-icons/fa";
@@ -24,7 +24,7 @@ const Footer = () => {
     },
   ];
 
-  const [email, setEmail] = React.useState("");
+  const [email, setEmail] = useState("");
   const onChange = ({ target }) => setEmail(target.value);
 
   const currentYear = new Date().getFullYear();
@@ -37,7 +37,8 @@ const Footer = () => {
           <div className="w-full">
             <Typography
               variant="small"
-              className="mb-4 font-bold uppercase opacity-50"
+              color="white"
+              className="mb-4 font-bold uppercase text-xl"
             >
               exclusive
             </Typography>
@@ -53,18 +54,19 @@ const Footer = () => {
               <Input
                 type="email"
                 label="Email Address"
+                color="white"
+                variant="standard"
+                placeholder="type your email"
                 value={email}
                 onChange={onChange}
-                className="pr-20 border-none  text-white "
-                containerProps={{
-                  className: "min-w-0 ",
-                }}
+                className="pr-20 border-none text-white"
+                containerProps={{ className: "min-w-0" }}
               />
               <Button
                 size="sm"
-                color={email ? "" : "gray"}
+                color={email ? "default" : "gray"}
                 disabled={!email}
-                className="!absolute right-1 top-1 rounded "
+                className="!absolute right-1 top-1 rounded"
               >
                 Send
               </Button>
@@ -76,7 +78,7 @@ const Footer = () => {
             <div key={key} className="w-full">
               <Typography
                 variant="small"
-                className="mb-4 font-bold uppercase opacity-50"
+                className="mb-4 font-bold uppercase text-xl"
               >
                 {title}
               </Typography>
@@ -98,7 +100,8 @@ const Footer = () => {
         <div className="flex w-full flex-col items-center justify-center border-t border-blue-gray-50 py-4 md:flex-row md:justify-between">
           <Typography
             variant="small"
-            className="mb-4 text-center font-normal text-blue-gray-900 md:mb-0"
+            color="white"
+            className="mb-4 text-center font-normal  md:mb-0"
           >
             &copy; {currentYear}{" "}
             <a href="https://material-tailwind.com/">Material Tailwind</a>. All
@@ -109,6 +112,7 @@ const Footer = () => {
             <Typography
               as="a"
               href="#"
+              color="white"
               className="opacity-80 transition-opacity hover:opacity-100"
             >
               <FaFacebookF />
@@ -116,6 +120,7 @@ const Footer = () => {
             <Typography
               as="a"
               href="#"
+              color="white"
               className="opacity-80 transition-opacity hover:opacity-100"
             >
               <FaInstagram />
@@ -123,6 +128,7 @@ const Footer = () => {
             <Typography
               as="a"
               href="#"
+              color="white"
               className="opacity-80 transition-opacity hover:opacity-100"
             >
               <FaXTwitter />
@@ -130,6 +136,7 @@ const Footer = () => {
             <Typography
               as="a"
               href="#"
+              color="white"
               className="opacity-80 transition-opacity hover:opacity-100"
             >
               <FaLinkedinIn />
