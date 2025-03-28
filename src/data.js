@@ -4,10 +4,11 @@ import blackBag2 from './assets/Product/woman/bags/backpack/one/black/Classic Le
 import blackBag3 from './assets/Product/woman/bags/backpack/one/black/Classic Leather_black_4.jpg';
 import blackBag4 from './assets/Product/woman/bags/backpack/one/black/Classic Leather_black_5.jpg';
 
+
 const products = {
-  "WomanFashion": {
-    "Bags": {
-      "Backpack": [
+  "womanFashion": {
+    "bags": {
+      "backpack": [
         {
           "id": 1,
           "name": "Classic Leather Backpack",
@@ -39,7 +40,15 @@ const products = {
         }
         
       ],
-      "Handbag": {},
+      "handbag": [
+        {
+          "id":1,
+          "name":"mostafa mahmoud",
+          "brand":"human",
+          "price":200,
+          "description":"lol"
+        }
+      ],
       "CrossbodyBag": {},
       "ClutchBag": {},
       "SaddleBag": {},
