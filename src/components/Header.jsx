@@ -108,6 +108,7 @@ const Header = () => {
 
         <IconButton
           variant="text"
+          aria-label="open dropdown"
           className="h-6 text-inherit w-6 active:bg-transparent focus:bg-transparent hover:bg-transparent lg:hidden ml-auto"
           ripple={false}
           onClick={() => setOpenNav(!openNav)}
