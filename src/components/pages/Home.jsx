@@ -14,16 +14,60 @@ import {
   FaHeadset,
   FaArrowUp,
 } from "react-icons/fa";
+import {
+  FaMobile,
+  FaLaptop,
+  FaHeadphones,
+  FaCamera,
+  FaGamepad,
+  FaApple,
+} from "react-icons/fa";
 import { SiAdguard } from "react-icons/si";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 
 import { IoMdEye } from "react-icons/io";
+import Store from "../../context/Store";
 
 const Home = () => {
-  const targetDate = new Date("2025-03-29T23:59:59"); // Set your target date here
+  const {
+    CartCount,
+    setCartCount,
+    wishListCount,
+    setwishListCount,
+    products,
+    setproducts,
+  } = useContext(Store);
+  const categories = [
+    { name: "Phone", icon: <FaMobile className="text-3xl" /> },
+    { name: "Computers", icon: <FaLaptop className="text-3xl" /> },
+    { name: "SmartWatch", icon: <FaApple className="text-3xl" /> },
+    { name: "Camera", icon: <FaCamera className="text-3xl" /> },
+    { name: "HeadPhones", icon: <FaHeadphones className="text-3xl" /> },
+    { name: "Gaming", icon: <FaGamepad className="text-3xl" /> },
+  ];
+
+  const targetDate = new Date("2025-04-29T23:59:59"); // Set your target date here
   const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
   const [rated, setRated] = useState(4);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(import.meta.env.VITE_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json(); // Correct JSON parsing
+        setproducts(data);
+        console.log("Fetched Products:", data);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   function getTimeLeft(target) {
     const now = new Date();
@@ -59,6 +103,13 @@ const Home = () => {
       });
     }
   };
+
+  function addtocart() {
+    setCartCount((prev) => prev + 1);
+  }
+  function addtowishlist() {
+    setwishListCount((prev) => prev + 1);
+  }
 
   return (
     <div className="container mt-3.5 mx-auto font-mainFont">
@@ -215,64 +266,75 @@ const Home = () => {
             ref={scrollContainer}
             className="flex p-4 overflow-x-auto scroll-smooth scrollbar-hide space-x-4"
           >
-            {Array.from({ length: 10 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-white p-4 rounded-lg  text-center  min-w-[16em] group hover:cursor-pointer "
-              >
-                <div className="w-full bg-sec h-64  relative">
-                  <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                    -35%
-                  </span>
-                  <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
-                    <button
-                      aria-label="add product to wishlist"
-                      className="  rounded-full z-10"
-                    >
-                      <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
-                    </button>
+            {products
+              .filter((Product) => Product.discountPercentage > 15)
+              .map((Product, index) => (
+                <div
+                  key={Product.id}
+                  className="bg-white p-4 rounded-lg text-center min-w-[16em] group hover:cursor-pointer"
+                >
+                  <div className="w-full bg-sec h-64 relative">
+                    <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
+                      -{Product.discountPercentage.toFixed()}%
+                    </span>
+                    <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
+                      <button
+                        aria-label="add product to wishlist"
+                        className="rounded-full z-10"
+                        onClick={() => {
+                          addtowishlist();
+                        }}
+                      >
+                        <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
+                      </button>
 
-                    <button
-                      aria-label="show product"
-                      className="   rounded-full z-10"
-                    >
-                      <IoMdEye className="text-2xl hover:scale-110 " />
-                    </button>
+                      <button
+                        aria-label="show product"
+                        className="rounded-full z-10"
+                      >
+                        <IoMdEye className="text-2xl hover:scale-110" />
+                      </button>
+                    </div>
+                    <div className="h-[100%] flex items-center justify-center relative">
+                      <img
+                        loading="lazy"
+                        src={Product.images}
+                        alt={Product.title}
+                        className="rounded-md object-contain"
+                      />
+                      <button
+                        aria-label="add to cart"
+                        className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                        onClick={() => {
+                          addtocart();
+                        }}
+                      >
+                        <p>Add to Cart</p>
+                      </button>
+                    </div>
                   </div>
-                  <div className="h-[100%] flex items-center justify-center reltaive ">
-                    <img
-                      loading="lazy"
-                      src="./controller.png"
-                      alt={`Product ${index + 1}`}
-                      className=" rounded-md   object-contain"
-                    />
-                    <button
-                      aria-label="add to cart"
-                      className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    >
-                      <p>Add to Cart</p>
-                    </button>
+                  <div className="flex flex-col gap-2 items-start">
+                    <p className="">{Product.title}</p>
+                    <div className="flex gap-3">
+                      <p className="text-main">{Product.price}</p>
+                      <p className="text-gray-400 line-through">
+                        {Product.price * (Product.discountPercentage / 100) +
+                          Product.price}
+                      </p>
+                    </div>
+                    <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
+                      ({rated})
+                      <Rating
+                        unratedColor="gray"
+                        value={4}
+                        ratedColor="amber"
+                        onChange={(value) => setRated(value)}
+                        className="mr-2"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 items-start">
-                  <p className="">HAVIT HV-G92 Gamepad</p>
-                  <div className="flex gap-3">
-                    <p className="text-main">150$</p>
-                    <p className="text-gray-400 line-through">180$</p>
-                  </div>
-                  <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                    ({rated})
-                    <Rating
-                      unratedColor="gray"
-                      value={4}
-                      ratedColor="amber"
-                      onChange={(value) => setRated(value)}
-                      className="mr-2"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
           <FaArrowUp
             className="fixed right-14 bottom-7 bg-[#f5f5f5] text-black  text-4xl p-2 rounded-full cursor-pointer hover:bg-gray-700 transition"
@@ -281,7 +343,9 @@ const Home = () => {
 
           <div className="flex justify-center mb-2 mt-4">
             <Link to="/product">
-              <Button className="bg-main px-12 py-5">View All Products</Button>
+              <Button className="bg-main px-12 py-5 capitalize">
+                View All Products
+              </Button>
             </Link>
           </div>
         </div>
@@ -304,6 +368,21 @@ const Home = () => {
                 onClick={() => scroll("right")}
               />
             </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+            {categories.map((category, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer gap-7"
+              >
+                <div className="mb-2 text-4xl">{category.icon}</div>
+                <span className="text-sm font-medium text-gray-700">
+                  {category.name}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -336,6 +415,9 @@ const Home = () => {
                 <button
                   aria-label="add product to wishlist"
                   className="  rounded-full z-10"
+                  onClick={() => {
+                    addtowishlist();
+                  }}
                 >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
                 </button>
@@ -354,7 +436,12 @@ const Home = () => {
                   alt={`Product ${index + 1}`}
                   className=" rounded-md   object-contain"
                 />
-                <button className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button
+                  className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  onClick={() => {
+                    addtocart();
+                  }}
+                >
                   <p>Add to Cart</p>
                 </button>
               </div>
@@ -426,6 +513,9 @@ const Home = () => {
                 <button
                   aria-label="add product to wishlist"
                   className="  rounded-full z-10"
+                  onClick={() => {
+                    addtowishlist();
+                  }}
                 >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
                 </button>
@@ -444,7 +534,12 @@ const Home = () => {
                   alt={`Product ${index + 1}`}
                   className=" rounded-md   object-contain"
                 />
-                <button className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button
+                  className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  onClick={() => {
+                    addtocart();
+                  }}
+                >
                   <p>Add to Cart</p>
                 </button>
               </div>
