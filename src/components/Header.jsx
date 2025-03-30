@@ -5,7 +5,8 @@ import {
   IconButton,
   Input,
 } from "@material-tailwind/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import Store from "../context/Store";
 import { Link } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
@@ -38,7 +39,11 @@ const Header = () => {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
-  const [cartCount, setCartCount] = useState(2);
+  const { cartCount, wishListCount } = useContext(Store);
+  console.log(cartCount);
+  const { wishlist } = useContext(Store); // Get wishlist from context
+  const [isOpen, setIsOpen] = useState(false); // Dropdown visibility state
+
   return (
     <Navbar fullWidth className="lg:px-8 lg:py-4  mx-auto px-4 py-2">
       <div className="container flex flex-wrap justify-between text-black items-center mx-auto">
@@ -87,10 +92,46 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-4 ml-4">
             <div className="flex items-center gap-4 ml-4 relative">
-              <FaRegHeart className="text-2xl hover:scale-105 hover:cursor-pointer " />
-              {cartCount > 0 && (
+              <div className="relative">
+                {/* Clickable Wishlist Icon */}
+                <FaRegHeart
+                  onClick={(event) => {
+                    event.stopPropagation(); // Prevents unintended navigation
+                    setIsOpen(!isOpen);
+                  }}
+                  className="text-2xl hover:scale-105 hover:cursor-pointer"
+                />
+
+                {/* Wishlist Dropdown */}
+                {isOpen && (
+                  <ul
+                    role="menu"
+                    data-popover="wishlist-menu"
+                    data-popover-placement="bottom"
+                    className="absolute z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm focus:outline-none"
+                  >
+                    {wishlist.length > 0 ? (
+                      wishlist.map((item, index) => (
+                        <li
+                          key={index}
+                          role="menuitem"
+                          className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
+                        >
+                          {item}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="p-3 text-gray-500 text-sm">
+                        No items in wishlist
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </div>
+
+              {wishListCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {cartCount}
+                  {wishListCount}
                 </span>
               )}
             </div>
