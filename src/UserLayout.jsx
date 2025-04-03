@@ -13,6 +13,7 @@ import Wishlist from "./components/pages/Wishlist";
 import About from "./components/pages/About";
 import Account from "./components/pages/Account";
 import Home from "./components/pages/Home";
+import ForgetPassword from "./components/pages/ForgetPassword";
 
 const UserLayout = () => {
   return (
@@ -27,6 +28,7 @@ const UserLayout = () => {
         <Route path="product" element={<Product />} />
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="about" element={<About />} />
         <Route path="account" element={<Account />} />
