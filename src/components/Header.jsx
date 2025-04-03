@@ -137,7 +137,7 @@ const Header = () => {
             </div>
 
             <div className="flex items-center gap-4 ml-4 relative">
-              <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
+              <Link to="/cart" ><IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" /></Link>
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
                   {cartCount}
@@ -145,7 +145,11 @@ const Header = () => {
               )}
             </div>
           </div>
+          <div className="flex items-center gap-4 ml-4 relative">
+            <Link to="/account" > <img src='/user.png' alt="account" className="text-3xl hover:scale-105 hover:cursor-pointer" /> </Link>
+          </div>
         </div>
+
 
         <IconButton
           variant="text"
@@ -185,6 +189,7 @@ const Header = () => {
             </svg>
           )}
         </IconButton>
+
       </div>
 
       <Collapse open={openNav}>
