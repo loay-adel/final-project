@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import React from "react";
+
 import { Typography, Button } from "@material-tailwind/react";
 import { FaFlag } from "react-icons/fa6";
 const Error = () => {
