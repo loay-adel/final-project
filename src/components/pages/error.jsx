@@ -1,29 +1,31 @@
-import { Link } from "react-router-dom";
 import React from "react";
-import { Typography, Button } from "@material-tailwind/react";
-import { FaFlag } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+
 const Error = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="h-screen mx-auto grid place-items-center text-center px-8">
-      <div>
-        <FaFlag className="w-20 h-20 mx-auto" />
-        <Typography
-          variant="h1"
-          color="blue-gray"
-          className="mt-10 !text-3xl !leading-snug md:!text-4xl font-mainFont">
-          Error 404 <br /> It looks like something went wrong.
-        </Typography>
-        <Typography className=" font-mainFont mt-8 mb-14 text-[18px] font-normal text-gray-500 mx-auto md:max-w-sm">
-          Don&apos;t worry, our team is already on it.Please try refreshing the
-          page or come back later.
-        </Typography>
-        <Link as={Link} to="/">
-          <Button
-            color="gray"
-            className="font-mainFont w-full px-4 md:w-[8rem] bg-main">
-            back home
-          </Button>
-        </Link>
+    <div className="">
+      <div className="container mx-auto px-4">
+        <div className="flex gap-1 my-[2rem] text-gray-500 md:justify-start justify-center">
+          <button onClick={() => navigate("/")} className="hover:font-bold">
+            Home
+          </button>
+          <span>/</span>
+          <span className="font-medium text-black">404 Error</span>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center items-center h-[60vh] bg-white">
+        <div className="flex flex-col justify-center items-center gap-5 text-center">
+          <h1 className="text-6xl font-bold">404 Not Found</h1>
+          <p className="text-lg">Your visited page not found. You may go home page.</p>
+          <button
+            onClick={() => navigate("/")}
+            className="bg-red-600 px-6 py-3 text-white hover:bg-red-800 rounded"
+          >
+            Back to Home Page
+          </button>
+        </div>
       </div>
     </div>
   );
