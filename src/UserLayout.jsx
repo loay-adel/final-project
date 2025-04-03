@@ -5,7 +5,6 @@ import Footer from "./components/Footer";
 import Cart from "./components/pages/Cart";
 import Checkout from "./components/pages/Checkout";
 import Contact from "./components/pages/Contact";
-import Error from "./components/pages/error";
 import Product from "./components/pages/Product";
 import Signin from "./components/pages/Signin";
 import Signup from "./components/pages/Signup";
@@ -14,6 +13,7 @@ import About from "./components/pages/About";
 import Account from "./components/pages/Account";
 import Home from "./components/pages/Home";
 import ForgetPassword from "./components/pages/ForgetPassword";
+import Error from "./components/pages/Error";
 
 const UserLayout = () => {
   return (
