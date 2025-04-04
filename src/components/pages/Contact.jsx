@@ -1,9 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useState } from "react";
 
 const Contact = () => {
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -66,9 +65,8 @@ const Contact = () => {
       <div className="mt-10"></div>
 
       <div className="flex gap-3 text-lg mb-10">
-        <button onClick={() => navigate("/")} className="text-gray-400">
-          Home
-        </button>
+        <Link to="/" className="text-gray-400">Home</Link>
+      
         <span>/</span>
         <button className="font-medium">Contact</button>
       </div>

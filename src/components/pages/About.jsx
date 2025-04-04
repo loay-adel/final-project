@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom";
+
 const About = () => {
   return (
     <>
       <div className="flex gap-3 mt-5 container md:justify-start justify-center">
-        <button onClick={() => navigate("/")} className="text-gray-400">Home</button>
+
+        <Link to="/" className="text-gray-400">Home</Link>
         <span>/</span>
         <button className="font-medium">About</button>
       </div>
