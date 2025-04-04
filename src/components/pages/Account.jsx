@@ -1,16 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Account = () => {
-  const navigate = useNavigate();
 
   return (
     <div className="container mx-auto p-5">
       <div className="flex flex-col md:flex-row justify-between items-center mb-5">
         <div className="flex gap-3">
-          <button onClick={() => navigate("/")} className="text-gray-400">
-            Home
-          </button>
+        <Link to="/" className="text-gray-400">Home</Link>
           <span>/</span>
           <button className="font-medium">My Account</button>
         </div>
