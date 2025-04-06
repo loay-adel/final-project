@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Signup = () => {
   return (
     <div className="flex flex-col-reverse  xl:flex-row  justify-start md:gap-[4.5em]  items-center  pt-[2em] pb-[4.5em]">
-      <img src="/dl.beatsnoop 1.png" alt="" />
+      <img src="/dl.beatsnoop 1.webp" alt="" />
       <div className=" px-[2em]">
         <Card color="transparent" shadow={false}>
           <Typography className="space-y-[2em]">

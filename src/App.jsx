@@ -3,13 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import UserLayout from "./UserLayout";
 import AdminLayout from "./AdminLayout";
 import Store from "./context/Store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
   const [wishListCount, setwishListCount] = useState(0);
   const [products, setproducts] = useState([]);
-
+  const [headerCart, setheaderCart] = useState([]);
   return (
     <Store.Provider
       value={{
@@ -19,6 +19,8 @@ function App() {
         setwishListCount,
         products,
         setproducts,
+        headerCart,
+        setheaderCart,
       }}
     >
       <Routes>
