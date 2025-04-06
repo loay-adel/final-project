@@ -9,26 +9,22 @@ const Signup = () => {
   const [user, setUser] = useState(null);
 
   return (
-    <div className="flex font-mainFont flex-col-reverse xl:flex-row items-center justify-center gap-8 pt-[2em] pb-[4.5em]">
-      <div className="w-full xl:w-1/2">
-        <img
-          src="/dl.beatsnoop 1.png"
-          alt="Signup illustration"
-          className="w-full h-auto"
-        />
-      </div>
-      <div className="w-full max-w-sm sm:max-w-md mx-auto px-4">
+    <div className="flex font-mainFont flex-col-reverse  xl:flex-row  justify-start md:gap-[4.5em]  items-center  pt-[2em] pb-[4.5em]">
+      <img src="/dl.beatsnoop 1.webp" alt="" />
+      <div className=" w-full xl:w-1/2">
         <Card color="transparent" shadow={false}>
           <div className="space-y-[1.5em]">
             <Typography
               variant="h2"
               color="blue-gray"
-              className="text-2xl sm:text-3xl md:text-4xl">
+              className="text-2xl sm:text-3xl md:text-4xl"
+            >
               Create an account
             </Typography>
             <Typography
               color="black"
-              className="mt-1 font-normal text-sm sm:text-base">
+              className="mt-1 font-normal text-sm sm:text-base"
+            >
               Enter your details below
             </Typography>
           </div>

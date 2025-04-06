@@ -29,6 +29,8 @@ import { Link } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import Store from "../../context/Store";
 
+import data from "../../data.js";
+
 const Home = () => {
   const {
     CartCount,
@@ -37,6 +39,8 @@ const Home = () => {
     setwishListCount,
     products,
     setproducts,
+    headerCart,
+    setheaderCart,
   } = useContext(Store);
   const categories = [
     { name: "Phone", icon: <FaMobile className="text-3xl" /> },
@@ -46,28 +50,19 @@ const Home = () => {
     { name: "HeadPhones", icon: <FaHeadphones className="text-3xl" /> },
     { name: "Gaming", icon: <FaGamepad className="text-3xl" /> },
   ];
+  useEffect(() => {
+    console.log("Data loaded successfully!");
+    console.log(`Total products: ${data.products.length}`);
+    console.log(`Total users: ${data.users.length}`);
+    console.log(`Total sales: ${data.sales.length}`);
+    console.log(data);
+
+    setproducts(data.products); // Set products in state
+  }, []);
 
   const targetDate = new Date("2025-04-29T23:59:59"); // Set your target date here
   const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
   const [rated, setRated] = useState(4);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(import.meta.env.VITE_URL);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json(); // Correct JSON parsing
-        setproducts(data);
-        console.log("Fetched Products:", data);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   function getTimeLeft(target) {
     const now = new Date();
@@ -104,125 +99,117 @@ const Home = () => {
     }
   };
 
-  function addtocart() {
-    setCartCount((prev) => prev + 1);
+  function addtocart(product) {
+    setheaderCart((prevCart) => {
+      // Check if the product already exists in the cart
+      const existingProduct = prevCart.find((item) => item.id === product.id);
+
+      if (existingProduct) {
+        // Increase quantity if the product is already in the cart
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        // Add new product with quantity 1
+        return [...prevCart, { ...product, quantity: 1 }];
+      }
+    });
+
+    setCartCount((prev) => prev + 1); // Increase cart count
   }
-  function addtowishlist() {
+
+  function addtowishlist(product) {
+    console.log(product);
     setwishListCount((prev) => prev + 1);
   }
 
   return (
-    <div className="container mt-3.5 mx-auto font-mainFont">
-      <div className="flex flex-col justify-between mb-20 md:flex-row md:h-[50vh]">
-        <div className="md:w-[20%] x-sm:mb-10">
-          {" "}
-          <Card className="w-full">
+    <div className="lg:container mt-3.5 mx-4 lg:mx-auto font-mainFont">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-20 md:mb-0 lg:h-[45vh]">
+        {/* Sidebar (Category List) */}
+        <div className="lg:col-span-1 w-[250px] hidden lg:block h-[45vh]">
+          <Card className="w-full h-full">
             <List>
-              <a href="#" className="text-initial">
-                <ListItem>Woman's Fashion</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>man's Fashion</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Electronics</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Home & Lifestyle</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Medicine</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Sports & Outdoor</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Baby’s & Toys</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Groceries & Pets</ListItem>
-              </a>
-              <a href="#" className="text-initial">
-                <ListItem>Health & Beauty</ListItem>
-              </a>
+              <ListItem className="relative group flex items-center justify-between w-full px-4 py-2">
+                Woman's Fashion
+                <span className="ml-2 inline-block w-2 h-2 border-t-2 border-r-2 border-black transform rotate-45"></span>
+                {/* Nested dropdown */}
+                <div className="absolute left-full top-0 hidden group-hover:flex flex-col rounded-md bg-white shadow-md w-[200px] min-w-[200px] border border-gray-200 z-10 overflow-hidden">
+                  <List>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Dresses
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Tops
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer">
+                      Skirts
+                    </ListItem>
+                  </List>
+                </div>
+              </ListItem>
+              <ListItem className="relative group flex items-center justify-between w-full px-4 py-2">
+                Man's Fashion
+                <span className="ml-2 inline-block w-2 h-2 border-t-2 border-r-2 border-black transform rotate-45"></span>
+                {/* Nested dropdown */}
+                <div className="absolute left-full top-0 hidden group-hover:flex flex-col rounded-md bg-white shadow-md w-[200px] min-w-[200px] border border-gray-200 z-10 overflow-hidden">
+                  <List>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Tops
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Pants
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer">
+                      Shoes
+                    </ListItem>
+                  </List>
+                </div>
+              </ListItem>
+              {[
+                "Electronics",
+                "Home & Lifestyle",
+                "Medicine",
+                "Sports & Outdoor",
+                "Baby’s & Toys",
+                "Groceries & Pets",
+                "Health & Beauty",
+              ].map((category, index) => (
+                <a key={index} href="#" className="text-initial">
+                  <ListItem className="px-4 py-2">{category}</ListItem>
+                </a>
+              ))}
             </List>
           </Card>
         </div>
-        <div className="w-full md:w-[75%]">
-          <Carousel
-            className="rounded-xl w-full mt-6 md:mt-0 "
-            prevArrow={({ handlePrev }) => (
-              <IconButton
-                variant="text"
-                color="white"
-                size="lg"
-                onClick={handlePrev}
-                aria-label="show previous picture"
-                className="-translate-y-2/4 !absolute left-4 top-2/4"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-                  />
-                </svg>
-              </IconButton>
-            )}
-            nextArrow={({ handleNext }) => (
-              <IconButton
-                variant="text"
-                aria-label="show next picture"
-                color="white"
-                size="lg"
-                onClick={handleNext}
-                className="-translate-y-2/4 !absolute !right-4 top-2/4"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              </IconButton>
-            )}
-          >
+
+        {/* Carousel Section */}
+        <div className="lg:col-span-3 h-[45vh] -z-10">
+          <Carousel autoplay="true" className="rounded-xl h-full z-10">
             <img
+              src="coffee-1283672_1920.webp"
               loading="lazy"
-              src="/sales.jpg"
               alt="image 1"
               className="h-full w-full object-cover"
             />
             <img
+              src="people-8149872_1920.webp"
               loading="lazy"
-              src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
               alt="image 2"
               className="h-full w-full object-cover"
             />
             <img
+              src="store-5619201_1920.webp"
               loading="lazy"
-              src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
               alt="image 3"
               className="h-full w-full object-cover"
             />
           </Carousel>
         </div>
       </div>
+
       <div className="md:mt-40">
         <div className="flex flex-row">
           <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
@@ -266,9 +253,9 @@ const Home = () => {
             ref={scrollContainer}
             className="flex p-4 overflow-x-auto scroll-smooth scrollbar-hide space-x-4"
           >
-            {products
+            {data.products
               .filter((Product) => Product.discountPercentage > 15)
-              .map((Product, index) => (
+              .map((Product) => (
                 <div
                   key={Product.id}
                   className="bg-white p-4 rounded-lg text-center min-w-[16em] group hover:cursor-pointer"
@@ -282,7 +269,7 @@ const Home = () => {
                         aria-label="add product to wishlist"
                         className="rounded-full z-10"
                         onClick={() => {
-                          addtowishlist();
+                          addtowishlist(Product);
                         }}
                       >
                         <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
@@ -298,15 +285,15 @@ const Home = () => {
                     <div className="h-[100%] flex items-center justify-center relative">
                       <img
                         loading="lazy"
-                        src={Product.images}
+                        src={Product.thumbnail}
                         alt={Product.title}
-                        className="rounded-md object-contain"
+                        className="rounded-md object-contain h-full"
                       />
                       <button
                         aria-label="add to cart"
                         className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                         onClick={() => {
-                          addtocart();
+                          addtocart(Product);
                         }}
                       >
                         <p>Add to Cart</p>
@@ -318,8 +305,10 @@ const Home = () => {
                     <div className="flex gap-3">
                       <p className="text-main">{Product.price}</p>
                       <p className="text-gray-400 line-through">
-                        {Product.price * (Product.discountPercentage / 100) +
-                          Product.price}
+                        {(
+                          Product.price /
+                          (1 - Product.discountPercentage / 100)
+                        ).toFixed(2)}
                       </p>
                     </div>
                     <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
@@ -395,28 +384,37 @@ const Home = () => {
         <h1 className="font-bold">Best Selling Products</h1>
         <div className="flex flex-col justify-between grow items-center md:flex-row">
           <div className="p-4 rounded-lg text-2xl text-center w-72 font-bold"></div>
-          <div className="flex flex-row gap-5 items-center"></div>
+          <div className="flex flex-row gap-5 items-center">
+            <FaArrowLeft
+              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
+              onClick={() => scroll("left")}
+            />
+            <FaArrowRight
+              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
+              onClick={() => scroll("right")}
+            />
+          </div>
         </div>
       </div>
       <div
         ref={scrollContainer}
         className="flex p-4 overflow-x-auto scroll-smooth scrollbar-hide space-x-4"
       >
-        {Array.from({ length: 10 }).map((_, index) => (
+        {data.products.map((product, index) => (
           <div
             key={index}
             className="bg-white p-4 rounded-lg  text-center   min-w-[16em] group hover:cursor-pointer "
           >
             <div className="w-full bg-sec h-64  relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                -35%
+                -{product.discountPercentage.toFixed()}%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                 <button
                   aria-label="add product to wishlist"
                   className="  rounded-full z-10"
                   onClick={() => {
-                    addtowishlist();
+                    addtowishlist(product);
                   }}
                 >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
@@ -432,14 +430,14 @@ const Home = () => {
               <div className="h-[100%] flex items-center justify-center reltaive ">
                 <img
                   loading="lazy"
-                  src="./controller.png"
+                  src={product.thumbnail}
                   alt={`Product ${index + 1}`}
-                  className=" rounded-md   object-contain"
+                  className=" rounded-md   object-contain h-full"
                 />
                 <button
                   className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   onClick={() => {
-                    addtocart();
+                    addtocart(product);
                   }}
                 >
                   <p>Add to Cart</p>
@@ -447,10 +445,16 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-col gap-2 items-start">
-              <p className="">HAVIT HV-G92 Gamepad</p>
+              <p className="">{product.title}</p>
               <div className="flex gap-3">
-                <p className="text-main">150$</p>
-                <p className="text-gray-400 line-through">180$</p>
+                <p className="text-main">{product.price}</p>
+                <p className="text-gray-400 line-through">
+                  {" "}
+                  {(
+                    product.price /
+                    (1 - product.discountPercentage / 100)
+                  ).toFixed(2)}
+                </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
                 ({rated})
@@ -473,7 +477,7 @@ const Home = () => {
       </div>
 
       <div className="mt-20 w-full">
-        <img src="/ad.png" alt="" loading="lazy" />
+        <img src="/ad.webp" alt="" loading="lazy" />
       </div>
 
       <div className="flex flex-row mt-10">
@@ -484,37 +488,27 @@ const Home = () => {
         <h1 className="font-bold">Explore Our Products</h1>
         <div className="flex flex-col justify-between grow items-center md:flex-row">
           <div className="p-4 rounded-lg text-2xl text-center w-72 font-bold"></div>
-          <div className="flex flex-row gap-5 items-center">
-            <FaArrowLeft
-              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
-              onClick={() => scroll("left")}
-            />
-            <FaArrowRight
-              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
-              onClick={() => scroll("right")}
-            />
-          </div>
         </div>
       </div>
       <div
         ref={scrollContainer}
         className="grid grid-cols-2  md:grid-cols-4 mt-4   justify-center  gap-4 md:gap-0 scroll-smooth scrollbar-hide space-x-4"
       >
-        {Array.from({ length: 8 }).map((_, index) => (
+        {data.products.map((product, index) => (
           <div
             key={index}
             className="bg-white p-4 rounded-lg  text-center  min-w-[23%] group hover:cursor-pointer "
           >
             <div className="w-full bg-sec h-64  relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                -35%
+                -{product.discountPercentage.toFixed()}%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                 <button
                   aria-label="add product to wishlist"
                   className="  rounded-full z-10"
                   onClick={() => {
-                    addtowishlist();
+                    addtowishlist(product);
                   }}
                 >
                   <FaHeart className="text-xl transition-transform hover:scale-110 hover:fill-red-500" />
@@ -530,14 +524,14 @@ const Home = () => {
               <div className="h-[100%] flex items-center justify-center reltaive ">
                 <img
                   loading="lazy"
-                  src="./controller.png"
+                  src={product.thumbnail}
                   alt={`Product ${index + 1}`}
-                  className=" rounded-md   object-contain"
+                  className=" rounded-md   object-contain h-full"
                 />
                 <button
                   className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   onClick={() => {
-                    addtocart();
+                    addtocart(product);
                   }}
                 >
                   <p>Add to Cart</p>
@@ -545,10 +539,17 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-col gap-2 items-start">
-              <p className="">HAVIT HV-G92 Gamepad</p>
+              <p className="">{product.title}</p>
               <div className="flex gap-3">
-                <p className="text-main">150$</p>
-                <p className="text-gray-400 line-through">180$</p>
+                <p className="text-main">{product.price}$</p>
+                <p className="text-gray-400 line-through">
+                  {" "}
+                  {(
+                    product.price /
+                    (1 - product.discountPercentage / 100)
+                  ).toFixed(2)}
+                  $
+                </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
                 ({rated})
@@ -585,7 +586,7 @@ const Home = () => {
           {/* PlayStation 5 - Larger item spanning two rows */}
           <div className="col-span-2 md:col-span-6 md:row-span-2 relative group bg-black flex items-end">
             <img
-              src="/ps5.png"
+              src="/ps5.webp"
               loading="lazy"
               alt="PlayStation 5"
               className="w-full  object-contain"
@@ -604,7 +605,8 @@ const Home = () => {
           {/* Women's Collections */}
           <div className="col-span-2 md:col-span-6 relative group">
             <img
-              src="/women.png"
+              src="/women.webp"
+              loading="lazy"
               alt="Women's Collections"
               className="object-cover w-full"
             />
@@ -622,8 +624,9 @@ const Home = () => {
           {/* Speakers */}
           <div className="col-span-2 md:col-span-3 relative group bg-black">
             <img
-              src="/speakers.png"
+              src="/speakers.webp"
               alt="Speakers"
+              loading="lazy"
               className=" object-contain md:scale-[1.4]"
             />
 
@@ -639,7 +642,8 @@ const Home = () => {
           {/* Perfume */}
           <div className="col-span-2 md:col-span-3 relative group bg-[#535353]">
             <img
-              src="/perfume.png"
+              src="/perfume.webp"
+              loading="lazy"
               alt="Perfume"
               className="w-full h-full object-cover"
             />

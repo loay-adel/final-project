@@ -8,7 +8,7 @@ import {
   MenuHandler,
   MenuList,
   MenuItem,
-  Avatar
+  Avatar,
 } from "@material-tailwind/react";
 import { useState, useEffect, useContext } from "react";
 import Store from "../context/Store";
@@ -21,15 +21,15 @@ const navList = (
       Home
     </Link>
 
-    <Link to="/contact" className="flex items-center">
+    <Link to="/contact" className="flex active:border-b-2 items-center">
       Contact
     </Link>
 
-    <Link to="/about" className="flex items-center">
+    <Link to="/about" className="flex active:border-b-2 items-center">
       About
     </Link>
 
-    <Link to="/signup" className="flex items-center">
+    <Link to="/signup" className="flex active:border-b-2 items-center">
       Signup
     </Link>
   </ul>
@@ -37,6 +37,8 @@ const navList = (
 
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
+  const { headerCart } = useContext(Store);
+  const [isDropOpen, setIsDropOpen] = useState(false);
 
   useEffect(() => {
     window.addEventListener(
@@ -46,8 +48,8 @@ const Header = () => {
   }, []);
   const { cartCount, wishListCount } = useContext(Store);
   console.log(cartCount);
-  const { wishlist } = useContext(Store); // Get wishlist from context
   const [isOpen, setIsOpen] = useState(false); // Dropdown visibility state
+  console.log(headerCart);
 
   return (
     <Navbar fullWidth className="lg:px-8 lg:py-4  mx-auto px-4 py-2">
@@ -99,39 +101,12 @@ const Header = () => {
             <div className="flex items-center gap-4 ml-4 relative">
               <div className="relative">
                 {/* Clickable Wishlist Icon */}
-                <FaRegHeart
-                  onClick={(event) => {
-                    event.stopPropagation(); // Prevents unintended navigation
-                    setIsOpen(!isOpen);
-                  }}
-                  className="text-2xl hover:scale-105 hover:cursor-pointer"
-                />
-
-                {/* Wishlist Dropdown */}
-                {isOpen && (
-                  <ul
-                    role="menu"
-                    data-popover="wishlist-menu"
-                    data-popover-placement="bottom"
-                    className="absolute z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm focus:outline-none"
-                  >
-                    {wishlist.length > 0 ? (
-                      wishlist.map((item, index) => (
-                        <li
-                          key={index}
-                          role="menuitem"
-                          className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 transition-all hover:bg-slate-100 focus:bg-slate-100 active:bg-slate-100"
-                        >
-                          {item}
-                        </li>
-                      ))
-                    ) : (
-                      <li className="p-3 text-gray-500 text-sm">
-                        No items in wishlist
-                      </li>
-                    )}
-                  </ul>
-                )}
+                <Link to="/Wishlist">
+                  <FaRegHeart
+                    onClick={() => setIsDropOpen(!isDropOpen)}
+                    className="text-2xl hover:scale-105 hover:cursor-pointer"
+                  />
+                </Link>
               </div>
 
               {wishListCount > 0 && (
@@ -140,20 +115,55 @@ const Header = () => {
                 </span>
               )}
             </div>
-
             <div className="flex items-center gap-4 ml-4 relative">
-              <Link to="/cart" ><IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" /></Link>
+              <IoCartOutline
+                className="text-3xl hover:scale-105 hover:cursor-pointer"
+                onClick={() => setIsOpen(!isOpen)}
+              />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
                   {cartCount}
                 </span>
+              )}
+
+              {/* Dropdown */}
+              {isOpen && (
+                <div className="absolute -right-4 top-10 h-56 overflow-y-auto w-80 bg-white border rounded-lg shadow-lg z-20 before:absolute before:right-3 before:-top-2 before:-translate-x-1/2 before:w-0 before:h-0 before:border-x-8 before:border-x-transparent before:border-b-8 before:border-b-black">
+                  {headerCart.length > 0 ? (
+                    headerCart.map((product, index) => (
+                      <Link to="/product">
+                        <div
+                          key={index}
+                          className="flex items-center justify-between border-b py-2 px-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          <img
+                            src={product.thumbnail}
+                            alt={product.title}
+                            className="w-10 h-10 rounded"
+                          />
+                          <span>{product.title}</span>
+                          <span>Qty: {product.quantity}</span>{" "}
+                          {/* Show quantity instead of price */}
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center p-4">
+                      Your cart is empty.
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
           <div className="flex items-center gap-4 ml-4 relative">
             <Menu>
               <MenuHandler>
-                <img src="/user.png" className="cursor-pointer text-3xl hover:scale-105 hover:cursor-pointer" alt="" />
+                <img
+                  src="/user.png"
+                  className="cursor-pointer text-3xl hover:scale-105 hover:cursor-pointer"
+                  alt=""
+                />
               </MenuHandler>
               <MenuList>
                 <MenuItem className="flex items-center gap-2">
@@ -172,7 +182,12 @@ const Header = () => {
                     />
                   </svg>
 
-                  <Typography variant="small" className="font-medium" as={Link} to="/account">
+                  <Typography
+                    variant="small"
+                    className="font-medium"
+                    as={Link}
+                    to="/account"
+                  >
                     My Profile
                   </Typography>
                 </MenuItem>
@@ -201,7 +216,6 @@ const Header = () => {
             </Menu>
           </div>
         </div>
-
 
         <IconButton
           variant="text"
@@ -241,7 +255,6 @@ const Header = () => {
             </svg>
           )}
         </IconButton>
-
       </div>
 
       <Collapse open={openNav}>
