@@ -4,6 +4,7 @@ import UserLayout from "./UserLayout";
 import AdminLayout from "./AdminLayout";
 import Store from "./context/Store";
 import { useState } from "react";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   const [cartCount, setCartCount] = useState(0);
@@ -11,6 +12,7 @@ function App() {
   const [products, setproducts] = useState([]);
   const [headerCart, setheaderCart] = useState([]);
   return (
+    <CartProvider>
     <Store.Provider
       value={{
         cartCount,
@@ -28,6 +30,7 @@ function App() {
         <Route path="/admin/*" element={<AdminLayout />} />
       </Routes>
     </Store.Provider>
+    </CartProvider>
   );
 }
 

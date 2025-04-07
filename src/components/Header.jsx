@@ -9,6 +9,7 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  Button,
 } from "@material-tailwind/react";
 import { useState, useEffect, useContext } from "react";
 import Store from "../context/Store";
@@ -152,6 +153,7 @@ const Header = () => {
                       Your cart is empty.
                     </p>
                   )}
+                  <Link className="flex justify-center items-center pt-4" to="/cart"><Button>View Cart</Button></Link>
                 </div>
               )}
             </div>
