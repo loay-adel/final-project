@@ -64,7 +64,7 @@ const Cart = () => {
                     ))
                   ) : (
                     <tr>
-                      <div className="flex flex-col items-center justify-center py-20 text-center text-gray-600">
+                      <td className="flex flex-col items-center justify-center py-20 text-center text-gray-600">
                         <ShoppingCartIcon className="w-20 h-20 text-red-500 mb-4" />
                         <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
                         <p className="mb-6 text-gray-500">Looks like you haven’t added anything to your cart yet.</p>
@@ -74,7 +74,7 @@ const Cart = () => {
                         >
                           Return to Shop
                         </Link>
-                      </div>
+                      </td>
                     </tr>
                   )}
                 </tbody>
