@@ -2,10 +2,22 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { FaStar } from "react-icons/fa";
 import { CartContext } from "../../context/CartContext";
+import Swal from "sweetalert2";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const { addToCart } = useContext(CartContext);
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    Swal.fire({
+      title: "Product Added to Cart!",
+      text: `${product.title} has been successfully added to your shopping cart.`,
+      icon: "success",
+      draggable: true,
+      confirmButtonText: "Okay",
+    });
+  };
 
   useEffect(() => {
     axios.get(`https://dummyjson.com/products`)
@@ -25,7 +37,7 @@ const Product = () => {
               <span>{p.price} EGP</span>
               <span>{p.rating} <FaStar className="text-yellow-400" /></span>
             </div>
-            <button onClick={() => addToCart(p)} className='btn cursor-pointer my-2'>Add to Cart</button>
+            <button onClick={() => handleAddToCart(p)} className='btn cursor-pointer my-2'>Add to Cart</button>
           </div>
         </div>
       ))}
