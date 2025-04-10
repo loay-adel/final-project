@@ -1,0 +1,237 @@
+{
+  "products": {
+    "Woman's Fashion": {
+      "Dresses": [],
+      "Tops": [],
+      "Skirts": []
+    },
+    "Man's Fashion": {},
+    "Electronics": {},
+    "Home & Lifestyle": {},
+    "Medicine": {},
+    "Sports & Outdoor": {},
+    "Baby’s & Toys": {},
+    "Groceries & Pets": {
+      "fruits": [
+        {
+          "title": "Apple",
+          "description": "Fresh and crisp apples, perfect for snacking or incorporating into various recipes.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Apple/1.png"
+        },
+        {
+          "title": "Kiwi",
+          "description": "Nutrient-rich kiwi, perfect for snacking or adding a tropical twist to your dishes.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Kiwi/1.png"
+        }
+      ],
+      "vegetables": [
+        {
+          "title": "Cucumber",
+          "description": "Crisp and hydrating cucumbers, ideal for salads, snacks, or as a refreshing side.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Cucumber/1.png"
+        },
+        {
+          "title": "Green Bell Pepper",
+          "description": "Fresh and vibrant green bell pepper, perfect for adding color and flavor to your dishes.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Green%20Bell%20Pepper/1.png"
+        },
+        {
+          "title": "Green Chili Pepper",
+          "description": "Spicy green chili pepper, ideal for adding heat to your favorite recipes.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Green%20Chili%20Pepper/1.png"
+        }
+      ],
+      "meat": [
+        {
+          "title": "Beef Steak",
+          "description": "High-quality beef steak, great for grilling or cooking to your preferred level of doneness.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Beef%20Steak/1.png"
+        },
+        {
+          "title": "Chicken Meat",
+          "description": "Fresh and tender chicken meat, suitable for various culinary preparations.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Chicken%20Meat/1.png"
+        }
+      ],
+      "seafood": [
+        {
+          "title": "Fish Steak",
+          "description": "Quality fish steak, suitable for grilling, baking, or pan-searing.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Fish%20Steak/1.png"
+        }
+      ],
+      "dairy": [
+        {
+          "title": "Eggs",
+          "description": "Fresh eggs, a versatile ingredient for baking, cooking, or breakfast.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Eggs/1.png"
+        }
+      ],
+      "pet supplies": [
+        {
+          "title": "Cat Food",
+          "description": "Nutritious cat food formulated to meet the dietary needs of your feline friend.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Cat%20Food/1.png"
+        },
+        {
+          "title": "Dog Food",
+          "description": "Specially formulated dog food designed to provide essential nutrients for your canine companion.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/1.png"
+        }
+      ],
+      "condiments": [
+        {
+          "title": "Honey Jar",
+          "description": "Pure and natural honey in a convenient jar, perfect for sweetening beverages or drizzling over food.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Honey%20Jar/1.png"
+        }
+      ],
+      "desserts": [
+        {
+          "title": "Ice Cream",
+          "description": "Creamy and delicious ice cream, available in various flavors for a delightful treat.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Ice%20Cream/1.png"
+        }
+      ],
+      "beverages": [
+        {
+          "title": "Juice",
+          "description": "Refreshing fruit juice, packed with vitamins and great for staying hydrated.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Juice/1.png"
+        }
+      ],
+      "cooking essentials": [
+        {
+          "title": "Cooking Oil",
+          "description": "Versatile cooking oil suitable for frying, sautéing, and various culinary applications.",
+          "image": "https://cdn.dummyjson.com/products/images/groceries/Cooking%20Oil/1.png"
+        }
+      ]
+    },
+    "Beauty": {
+      "mascara": [
+        {
+          "title": "Essence Mascara Lash Princess",
+          "description": "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.",
+          "image": "https://cdn.dummyjson.com/products/images/beauty/Essence%20Mascara%20Lash%20Princess/1.png"
+        }
+      ],
+      "eyeshadow": [
+        {
+          "title": "Eyeshadow Palette with Mirror",
+          "description": "The Eyeshadow Palette with Mirror offers a versatile range of eyeshadow shades for creating stunning eye looks. With a built-in mirror, it's convenient for on-the-go makeup application.",
+          "image": "https://cdn.dummyjson.com/products/images/beauty/Eyeshadow%20Palette%20with%20Mirror/1.png"
+        }
+      ],
+      "face powder": [
+        {
+          "title": "Powder Canister",
+          "description": "The Powder Canister is a finely milled setting powder designed to set makeup and control shine. With a lightweight and translucent formula, it provides a smooth and matte finish.",
+          "image": "https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/1.png"
+        }
+      ],
+      "lipstick": [
+        {
+          "title": "Red Lipstick",
+          "description": "The Red Lipstick is a classic and bold choice for adding a pop of color to your lips. With a creamy and pigmented formula, it provides a vibrant and long-lasting finish.",
+          "image": "https://cdn.dummyjson.com/products/images/beauty/Red%20Lipstick/1.png"
+        }
+      ],
+      "nail polish": [
+        {
+          "title": "Red Nail Polish",
+          "description": "The Red Nail Polish offers a rich and glossy red hue for vibrant and polished nails. With a quick-drying formula, it provides a salon-quality finish at home.",
+          "image": "https://cdn.dummyjson.com/products/images/beauty/Red%20Nail%20Polish/1.png"
+        }
+      ]
+    },
+    "Fragrances": {
+      "perfumes": [
+        {
+          "title": "Calvin Klein CK One",
+          "description": "CK One by Calvin Klein is a classic unisex fragrance, known for its fresh and clean scent. It's a versatile fragrance suitable for everyday wear.",
+          "image": "https://cdn.dummyjson.com/products/images/fragrances/Calvin%20Klein%20CK%20One/1.png"
+        },
+        {
+          "title": "Chanel Coco Noir Eau De",
+          "description": "Coco Noir by Chanel is an elegant and mysterious fragrance, featuring notes of grapefruit, rose, and sandalwood. Perfect for evening occasions.",
+          "image": "https://cdn.dummyjson.com/products/images/fragrances/Chanel%20Coco%20Noir%20Eau%20De/1.png"
+        },
+        {
+          "title": "Dior J'adore",
+          "description": "J'adore by Dior is a luxurious and floral fragrance, known for its blend of ylang-ylang, rose, and jasmine. It embodies femininity and sophistication.",
+          "image": "https://cdn.dummyjson.com/products/images/fragrances/Dior%20J'adore/1.png"
+        },
+        {
+          "title": "Dolce Shine Eau de",
+          "description": "Dolce Shine by Dolce & Gabbana is a vibrant and fruity fragrance, featuring notes of mango, jasmine, and blonde woods. It's a joyful and youthful scent.",
+          "image": "https://cdn.dummyjson.com/products/images/fragrances/Dolce%20Shine%20Eau%20de/1.png"
+        },
+        {
+          "title": "Gucci Bloom Eau de",
+          "description": "Gucci Bloom by Gucci is a floral and captivating fragrance, with notes of tuberose, jasmine, and Rangoon creeper. It's a modern and romantic scent.",
+          "image": "https://cdn.dummyjson.com/products/images/fragrances/Gucci%20Bloom%20Eau%20de/1.png"
+        }
+      ]
+    },
+    "Furniture": {
+      "beds": [
+        {
+          "title": "Annibale Colombo Bed",
+          "description": "The Annibale Colombo Bed is a luxurious and elegant bed frame, crafted with high-quality materials for a comfortable and stylish bedroom.",
+          "image": "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/1.png"
+        }
+      ],
+      "sofas": [
+        {
+          "title": "Annibale Colombo Sofa",
+          "description": "The Annibale Colombo Sofa is a sophisticated and comfortable seating option, featuring exquisite design and premium upholstery for your living room.",
+          "image": "https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Sofa/1.png"
+        }
+      ],
+      "bedside tables": [
+        {
+          "title": "Bedside Table African Cherry",
+          "description": "The Bedside Table in African Cherry is a stylish and functional addition to your bedroom, providing convenient storage space and a touch of elegance.",
+          "image": "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/1.png"
+        }
+      ],
+      "office chairs": [
+        {
+          "title": "Knoll Saarinen Executive Conference Chair",
+          "description": "The Knoll Saarinen Executive Conference Chair is a modern and ergonomic chair, perfect for your office or conference room with its timeless design.",
+          "image": "https://cdn.dummyjson.com/products/images/furniture/Knoll%20Saarinen%20Executive%20Conference%20Chair/1.png"
+        }
+      ],
+      "bathroom": [
+        {
+          "title": "Wooden Bathroom Sink With Mirror",
+          "description": "The Wooden Bathroom Sink with Mirror is a unique and stylish addition to your bathroom, featuring a wooden sink countertop and a matching mirror.",
+          "image": "https://cdn.dummyjson.com/products/images/furniture/Wooden%20Bathroom%20Sink%20With%20Mirror/1.png"
+        }
+      ]
+    }
+  },
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "password": "lol",
+      "wishlist": {}
+    }
+  ],
+  "sales": [
+    {
+      "id": 101,
+      "userId": 1,
+      "productId": 1,
+      "quantity": 2,
+      "totalPrice": 18.58,
+      "purchaseDate": "2024-05-24T10:30:00.000Z"
+    }
+  ],
+  "total": 194,
+  "skip": 0,
+  "limit": 30
+}
