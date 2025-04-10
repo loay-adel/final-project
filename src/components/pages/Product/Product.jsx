@@ -5,20 +5,17 @@ import Swal from "sweetalert2";
 import { CartContext } from "../../../context/CartContext";
 import ShowProduct from "./ShowProduct";
 import ShowProducts from "./ShowProducts";
-
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null); 
   const { category, name } = useParams();
   const { addToCart } = useContext(CartContext);
-
   useEffect(() => {
     axios
       .get(`https://inquisitive-wise-story.glitch.me/db.json`)
       .then((res) => {
         const formattedCategory = category[0].toUpperCase() + category.slice(1);
         const categoryProducts = res.data.categories[formattedCategory];
-
         if (categoryProducts) {
           if (name) {
             const singleProduct = categoryProducts.find((item) => item.title === name);
@@ -45,11 +42,9 @@ const Product = () => {
       color: "white",
     });
   };
-
   return (
     <div>
-      {console.log()
-      }
+      {console.log() }
       {name ? (
         <ShowProduct product={product} handleAddToCart={handleAddToCart} />
       ) : (
