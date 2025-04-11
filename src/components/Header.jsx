@@ -124,7 +124,7 @@ const Header = () => {
               <Link to="/cart">
                 <IoCartOutline
                   className="text-3xl hover:scale-105 hover:cursor-pointer"
-                  
+
                 />
               </Link>
               {getCartCount() > 0 && (
@@ -137,7 +137,7 @@ const Header = () => {
             </div>
           </div>
           <div className="flex items-center gap-4 ml-4 relative">
-            
+
             <Menu>
               <MenuHandler>
                 <img
