@@ -19,7 +19,7 @@ const ShowProduct = ({ product,handleAddToCart }) => {
   };
 
 
-  if (!product) return <div className="text-center py-10">Loading...</div>;
+  if (product.description==null) return <div className="text-center py-10">Loading...</div>;
 
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 bg-white rounded-xl overflow-hidden max-w-5xl mx-auto my-8 shadow-lg'>
