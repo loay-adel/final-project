@@ -44,7 +44,6 @@ const Product = () => {
   };
   return (
     <div>
-      {console.log() }
       {name ? (
         <ShowProduct product={product} handleAddToCart={handleAddToCart} />
       ) : (

@@ -18,7 +18,7 @@ const ShowProduct = ({ product, handleAddToCart }) => {
     }
   };
 
-  if (!product.title)
+  if (!product.description)
     return (
       <div className="text-center py-10">
         Error in fetching data .. please try again later
