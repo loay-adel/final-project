@@ -2,11 +2,47 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import Swal from 'sweetalert2';
+
 
 
 const Checkout = () => {
 
   const { cart, getTotal } = useContext(CartContext)
+
+  const [formValues, setFormValues] = useState({
+    firstName: "",
+    companyName: "",
+    address: "",
+    apartment: "",
+    city: "",
+    phoneNumber: "",
+    email: ""
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({
+      ...formValues,
+      [name]: value
+    });
+  };
+
+  const handlePlaceOrder = () => {
+    if (formValues.firstName && formValues.companyName && formValues.address && formValues.city && formValues.phoneNumber && formValues.email) {
+      Swal.fire({
+        title: "Order placed successfully!",
+        icon: "success",
+        draggable: true
+      });
+    } else {
+      Swal.fire({
+        title: "Please fill in all the fields.",
+        icon: "warning",
+        confirmButtonText: "OK"
+      });
+    }
+  };
 
   return (
     <>
@@ -30,36 +66,57 @@ const Checkout = () => {
             <label className="block text-gray-700 mb-2 text-sm font-medium">First Name</label>
             <input
               type="text"
+              name="firstName"
+              value={formValues.firstName}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Company Name</label>
             <input
               type="text"
+              name="companyName"
+              value={formValues.companyName}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Street Address</label>
             <input
               type="text"
+              name="address"
+              value={formValues.address}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Apartment, floor, etc. (optional)</label>
             <input
               type="text"
+              name="apartment"
+              value={formValues.apartment}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Town/City</label>
             <input
               type="text"
+              name="city"
+              value={formValues.city}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Phone Number</label>
             <input
               type="text"
+              name="phoneNumber"
+              value={formValues.phoneNumber}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <label className="block text-gray-700 mb-2 text-sm font-medium">Email Address</label>
             <input
               type="email"
+              name="email"
+              value={formValues.email}
+              onChange={handleInputChange}
               className="mb-4 shadow-xs bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5"
             />
             <div className="flex items-center mt-3">
@@ -75,7 +132,7 @@ const Checkout = () => {
                 <div key={item.id} className="flex items-center justify-between mb-4">
                   <div className="flex items-center justify-between space-x-3">
                     <img src={item.images[0]} alt={item.title} className="w-12 h-12" />
-                    <p className="text-sm">{item.title}</p>
+                    <p className="text-sm">{item.title.split(" ").slice(0, 2).join(" ")}</p>
                   </div>
                   <p className="text-sm">{item.subtotal.toFixed(2)} EGP</p>
                 </div>
@@ -83,8 +140,8 @@ const Checkout = () => {
             ) :
               <div className="flex flex-col justify-center items-center pt-5">
                 <ShoppingCartIcon className="w-20 h-20 text-red-500 mb-4 " />
-                <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
-                <p className="mb-6 text-gray-500">Looks like you haven’t added anything to your cart yet.</p>
+                <h2 className="text-2xl font-semibold mb-2 text-center">Your cart is empty</h2>
+                <p className="mb-6 text-gray-500 text-center">Looks like you haven’t added anything to your cart yet.</p>
                 <Link
                   to="/product"
                   className="inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg text-sm font-medium transition duration-300"
@@ -132,7 +189,7 @@ const Checkout = () => {
                     </form>
                   </div>
                 </div>
-                <button className="w-full mt-4 bg-red-600 text-white py-3 rounded hover:bg-red-800">
+                <button className="w-full mt-4 bg-red-600 text-white py-3 rounded hover:bg-red-800" onClick={handlePlaceOrder} >
                   Place Order
                 </button>
 

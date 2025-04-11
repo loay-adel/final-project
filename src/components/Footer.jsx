@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input, Button } from "@material-tailwind/react";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaLinkedinIn, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const SITEMAP = [
@@ -16,7 +17,13 @@ const Footer = () => {
     },
     {
       title: "ACCOUNT",
-      links: ["My Account", "Login / Register", "Cart", "Wishlist", "Shop"],
+      links: [
+        { name: "My Account", to: "/account" },
+        { name: "Login / Register", to: "/signin" },
+        { name: "Cart", to: "/cart" },
+        { name: "Wishlist", to: "/wishlist" },
+        { name: "Shop", to: "/product" },
+      ],
     },
     {
       title: "Quick Link",
@@ -33,7 +40,6 @@ const Footer = () => {
     <footer className="relative w-full bg-black">
       <div className="mx-auto w-full max-w-7xl px-8 text-white">
         <div className="mx-auto grid w-full grid-cols-1 gap-8 py-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* First column with exclusive content and email subscription */}
           <div className="w-full">
             <Typography
               variant="small"
@@ -73,7 +79,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Other columns for the sitemap */}
           {SITEMAP.slice(1).map(({ title, links }, key) => (
             <div key={key} className="w-full">
               <Typography
@@ -85,12 +90,21 @@ const Footer = () => {
               <ul className="space-y-1">
                 {links.map((link, key) => (
                   <Typography key={key} as="li" className="font-normal">
-                    <a
-                      href="#"
-                      className="inline-block py-1 pr-2 transition-transform hover:scale-105"
-                    >
-                      {link}
-                    </a>
+                    {link.to ? (
+                      <Link
+                        to={link.to}
+                        className="inline-block py-1 pr-2 transition-transform hover:scale-105 hover:scale-105"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href="#"
+                        className="inline-block py-1 pr-2 transition-transform hover:scale-105"
+                      >
+                        {link}
+                      </a>
+                    )}
                   </Typography>
                 ))}
               </ul>
@@ -108,7 +122,6 @@ const Footer = () => {
             Rights Reserved.
           </Typography>
           <div className="flex gap-4 text-blue-gray-900 sm:justify-center">
-            {/* Social media icons */}
             <Typography
               as="a"
               href="#"
@@ -148,4 +161,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;
