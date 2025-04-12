@@ -31,8 +31,25 @@ import { IoMdEye } from "react-icons/io";
 import Store from "../../context/Store";
 
 import data from "../../data.js";
+import { CartContext } from "../../context/CartContext";
+import Swal from "sweetalert2";
 
 const Home = () => {
+  const { addToCart } = useContext(CartContext);
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    Swal.fire({
+      title: "Product Added to Cart!",
+      text: `${product.title} has been successfully added to your shopping cart.`,
+      icon: "success",
+      showConfirmButton: false,
+      timer: 1500,
+      position: "bottom-end",
+      toast: true,
+      background: "#48bb78",
+      color: "white",
+    });
+  };
   const {
     CartCount,
     setCartCount,
@@ -117,26 +134,26 @@ const Home = () => {
     }
   };
 
-  function addtocart(product) {
-    setheaderCart((prevCart) => {
-      // Check if the product already exists in the cart
-      const existingProduct = prevCart.find((item) => item.id === product.id);
+  // function addtocart(product) {
+  //   setheaderCart((prevCart) => {
+  //     // Check if the product already exists in the cart
+  //     const existingProduct = prevCart.find((item) => item.id === product.id);
 
-      if (existingProduct) {
-        // Increase quantity if the product is already in the cart
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        // Add new product with quantity 1
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
+  //     if (existingProduct) {
+  //       // Increase quantity if the product is already in the cart
+  //       return prevCart.map((item) =>
+  //         item.id === product.id
+  //           ? { ...item, quantity: item.quantity + 1 }
+  //           : item
+  //       );
+  //     } else {
+  //       // Add new product with quantity 1
+  //       return [...prevCart, { ...product, quantity: 1 }];
+  //     }
+  //   });
 
-    setCartCount((prev) => prev + 1); // Increase cart count
-  }
+  //   setCartCount((prev) => prev + 1); // Increase cart count
+  // }
 
   function addtowishlist(product) {
     console.log(product);
@@ -171,7 +188,7 @@ const Home = () => {
                 </div>
               </ListItem>
               <ListItem className="relative group flex items-center justify-between w-full px-4 py-2">
-                Man's Fashion
+                Men's Fashion
                 <span className="ml-2 inline-block w-2 h-2 border-t-2 border-r-2 border-black transform rotate-45"></span>
                 {/* Nested dropdown */}
                 <div className="absolute left-full top-0 hidden group-hover:flex flex-col rounded-md bg-white shadow-md w-[200px] min-w-[200px] border border-gray-200 z-10 overflow-hidden">
@@ -198,7 +215,13 @@ const Home = () => {
                 "Health & Beauty",
               ].map((category, index) => (
                 <a key={index} href="#" className="text-initial">
-                  <ListItem className="px-4 py-2">{category}</ListItem>
+                  <Link
+                    to={`/show-products/${
+                      category[0].toLowerCase() + category.slice(1)
+                    }`}
+                  >
+                    <ListItem className="px-4 py-2">{category}</ListItem>
+                  </Link>
                 </a>
               ))}
             </List>
@@ -313,7 +336,7 @@ const Home = () => {
                         aria-label="add to cart"
                         className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                         onClick={() => {
-                          addtocart(Product);
+                          handleAddToCart(Product);
                         }}
                       >
                         <p>Add to Cart</p>
@@ -452,7 +475,7 @@ const Home = () => {
                 <button
                   className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   onClick={() => {
-                    addtocart(product);
+                    handleAddToCart(product);
                   }}
                 >
                   <p>Add to Cart</p>
@@ -541,7 +564,7 @@ const Home = () => {
                 <button
                   className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   onClick={() => {
-                    addtocart(product);
+                    handleAddToCart(product);
                   }}
                 >
                   <p>Add to Cart</p>

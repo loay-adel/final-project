@@ -16,6 +16,8 @@ import Store from "../context/Store";
 import { Link } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
+import { CartContext } from "../context/CartContext";
+
 const navList = (
   <ul className="flex flex-col gap-2 lg:flex-row lg:gap-6 lg:items-center lg:mb-0 lg:mt-0 mb-4 mt-2">
     <Link to="/" className="flex active:border-b-2 items-center">
@@ -40,6 +42,8 @@ const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const { headerCart } = useContext(Store);
   const [isDropOpen, setIsDropOpen] = useState(false);
+
+  const { getCartCount } = useContext(CartContext)
 
   useEffect(() => {
     window.addEventListener(
@@ -117,48 +121,23 @@ const Header = () => {
               )}
             </div>
             <div className="flex items-center gap-4 ml-4 relative">
-              <IoCartOutline
-                className="text-3xl hover:scale-105 hover:cursor-pointer"
-                onClick={() => setIsOpen(!isOpen)}
-              />
-              {cartCount > 0 && (
+              <Link to="/cart">
+                <IoCartOutline
+                  className="text-3xl hover:scale-105 hover:cursor-pointer"
+
+                />
+              </Link>
+              {getCartCount() > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {cartCount}
+                  {getCartCount()}
                 </span>
               )}
 
-              {/* Dropdown */}
-              {isOpen && (
-                <div className="absolute -right-4 top-10 h-56 overflow-y-auto w-80 bg-white border rounded-lg shadow-lg z-20 before:absolute before:right-3 before:-top-2 before:-translate-x-1/2 before:w-0 before:h-0 before:border-x-8 before:border-x-transparent before:border-b-8 before:border-b-black">
-                  {headerCart.length > 0 ? (
-                    headerCart.map((product, index) => (
-                      <Link to="/product">
-                        <div
-                          key={index}
-                          className="flex items-center justify-between border-b py-2 px-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                          <img
-                            src={product.thumbnail}
-                            alt={product.title}
-                            className="w-10 h-10 rounded"
-                          />
-                          <span>{product.title}</span>
-                          <span>Qty: {product.quantity}</span>{" "}
-                          {/* Show quantity instead of price */}
-                        </div>
-                      </Link>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-center p-4">
-                      Your cart is empty.
-                    </p>
-                  )}
-                  <Link className="flex justify-center items-center pt-4" to="/cart"><Button>View Cart</Button></Link>
-                </div>
-              )}
+
             </div>
           </div>
           <div className="flex items-center gap-4 ml-4 relative">
+
             <Menu>
               <MenuHandler>
                 <img
