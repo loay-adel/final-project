@@ -5,6 +5,7 @@ import {
   Rating,
   Typography,
   Button,
+  Alert,
 } from "@material-tailwind/react";
 import {
   FaArrowLeft,
@@ -32,8 +33,6 @@ import Store from "../../context/Store";
 import data from "../../data.js";
 import { CartContext } from "../../context/CartContext";
 import Swal from "sweetalert2";
-
-
 
 const Home = () => {
   const { addToCart } = useContext(CartContext);
@@ -77,6 +76,23 @@ const Home = () => {
     console.log(data);
 
     setproducts(data.products); // Set products in state
+  }, []);
+  const [showArrowUP, setshowArrowUP] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const viewportHeight = window.innerHeight;
+
+      if (scrollPosition >= viewportHeight) {
+        setshowArrowUP(true);
+      } else {
+        setshowArrowUP(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const targetDate = new Date("2025-04-29T23:59:59"); // Set your target date here
@@ -142,6 +158,8 @@ const Home = () => {
   function addtowishlist(product) {
     console.log(product);
     setwishListCount((prev) => prev + 1);
+
+    return <Alert color="blue">A simple alert for showing message.</Alert>;
   }
 
   return (
@@ -188,13 +206,20 @@ const Home = () => {
                 </div>
               </ListItem>
               {[
-                'Beauty',
-                'Fragrances',
-                'Furniture',
-                'Groceries & Pets'
+                "Electronics",
+                "Home & Lifestyle",
+                "Medicine",
+                "Sports & Outdoor",
+                "Baby’s & Toys",
+                "Groceries & Pets",
+                "Health & Beauty",
               ].map((category, index) => (
                 <a key={index} href="#" className="text-initial">
-                  <Link to={`/show-products/${(category[0].toLowerCase() + category.slice(1))}`}>
+                  <Link
+                    to={`/show-products/${
+                      category[0].toLowerCase() + category.slice(1)
+                    }`}
+                  >
                     <ListItem className="px-4 py-2">{category}</ListItem>
                   </Link>
                 </a>
@@ -205,7 +230,7 @@ const Home = () => {
 
         {/* Carousel Section */}
         <div className="lg:col-span-3 h-[45vh] -z-10">
-          <Carousel autoplay="true" className="rounded-xl h-full z-10">
+          <Carousel autoplay className="rounded-xl h-full z-10">
             <img
               src="coffee-1283672_1920.webp"
               loading="lazy"
@@ -343,10 +368,12 @@ const Home = () => {
                 </div>
               ))}
           </div>
-          <FaArrowUp
-            className="fixed right-14 bottom-7 bg-[#f5f5f5] text-black  text-4xl p-2 rounded-full cursor-pointer hover:bg-gray-700 transition"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          />
+          {showArrowUP && (
+            <FaArrowUp
+              className="fixed right-14 bottom-7 bg-[#f5f5f5] text-black text-4xl p-2 rounded-full cursor-pointer hover:bg-gray-700 transition"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            />
+          )}
 
           <div className="flex justify-center mb-2 mt-4">
             <Link to="/product">
@@ -382,12 +409,10 @@ const Home = () => {
             {categories.map((category, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer gap-7"
+                className="flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-md  transition-shadow cursor-pointer gap-7 hover:bg-main hover:text-white mt-10"
               >
                 <div className="mb-2 text-4xl">{category.icon}</div>
-                <span className="text-sm font-medium text-gray-700">
-                  {category.name}
-                </span>
+                <span className="text-sm font-medium ">{category.name}</span>
               </div>
             ))}
           </div>
@@ -403,14 +428,9 @@ const Home = () => {
         <div className="flex flex-col justify-between grow items-center md:flex-row">
           <div className="p-4 rounded-lg text-2xl text-center w-72 font-bold"></div>
           <div className="flex flex-row gap-5 items-center">
-            <FaArrowLeft
-              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
-              onClick={() => scroll("left")}
-            />
-            <FaArrowRight
-              className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
-              onClick={() => scroll("right")}
-            />
+            <Link to="/product">
+              <Button className="bg-main px-12 py-4">View All</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -487,11 +507,6 @@ const Home = () => {
             </div>
           </div>
         ))}
-      </div>
-      <div className="flex justify-center mb-2 mt-4">
-        <Link to="/product">
-          <Button className="bg-main px-12 py-5">View All Products</Button>
-        </Link>
       </div>
 
       <div className="mt-20 w-full">
