@@ -9,15 +9,14 @@ import Error from "./components/pages/error";
 import Product from "./components/pages/Product/Product";
 import ShowProduct from "./components/pages/Product/ShowProduct";
 
-import Signin from "./components/pages/Signin";
-import Signup from "./components/pages/Signup";
 import Wishlist from "./components/pages/Wishlist";
 import About from "./components/pages/About";
 import Account from "./components/pages/Account";
 import Home from "./components/pages/Home";
 import ForgetPassword from "./components/pages/ForgetPassword";
 
-
+import Signin from "./components/authentucation/Signin";
+import Signup from "./components/authentucation/Signup";
 const UserLayout = () => {
   return (
     <>
@@ -32,6 +31,7 @@ const UserLayout = () => {
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
         <Route path="forget-password" element={<ForgetPassword />} />
+
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="about" element={<About />} />
         <Route path="account" element={<Account />} />
