@@ -2,12 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Account = () => {
-
   return (
     <div className="container mx-auto p-5">
       <div className="flex flex-col md:flex-row justify-between items-center mb-5">
         <div className="flex gap-3">
-        <Link to="/" className="text-gray-400">Home</Link>
+          <Link to="/" className="text-gray-400">
+            Home
+          </Link>
           <span>/</span>
           <button className="font-medium">My Account</button>
         </div>
@@ -32,13 +33,14 @@ const Account = () => {
           <p className="font-medium">My Wishlist</p>
         </div>
         <div className="md:w-3/4 px-5 py-4 shadow-sm bg-white">
-          <p className="text-2xl font-medium text-red-600 mb-5">Edit Your Profile</p>
+          <p className="text-2xl font-medium text-red-600 mb-5">
+            Edit Your Profile
+          </p>
           <div className="flex flex-col md:flex-row justify-between gap-5 mb-5">
             <div className="w-full md:w-1/2">
               <label
                 htmlFor="fName"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900">
                 First Name
               </label>
               <input
@@ -51,8 +53,7 @@ const Account = () => {
             <div className="w-full md:w-1/2">
               <label
                 htmlFor="lName"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900">
                 Last Name
               </label>
               <input
@@ -67,8 +68,7 @@ const Account = () => {
             <div className="w-full md:w-1/2">
               <label
                 htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900">
                 Email
               </label>
               <input
@@ -81,8 +81,7 @@ const Account = () => {
             <div className="w-full md:w-1/2">
               <label
                 htmlFor="address"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900">
                 Address
               </label>
               <input
@@ -96,8 +95,7 @@ const Account = () => {
           <div>
             <label
               htmlFor="currentPassword"
-              className="block mb-2 text-sm font-medium text-gray-900"
-            >
+              className="block mb-2 text-sm font-medium text-gray-900">
               Password Changes
             </label>
             <input

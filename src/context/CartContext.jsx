@@ -6,7 +6,6 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [products, setProducts] = useState([]);
-
   // Memoized cart calculations
   const { total, count } = useMemo(() => {
     return cart.reduce(
