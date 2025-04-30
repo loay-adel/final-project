@@ -56,12 +56,11 @@ const Home = () => {
     { name: "Gaming", icon: <FaGamepad className="text-3xl" /> },
   ];
 
-  const targetDate = new Date("2025-04-29T23:59:59");
+  const targetDate = new Date("2025-05-29T23:59:59");
   const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
 
   const scrollContainer = useRef(null);
 
-  // Enhanced handleAddToCart with wishlist check
   const handleAddToCart = (product) => {
     addToCart(product);
     Swal.fire({
@@ -77,7 +76,6 @@ const Home = () => {
     });
   };
 
-  // Enhanced handleAddToWishlist
   const handleAddToWishlist = (product) => {
     addToWishlist(product);
     Swal.fire({
@@ -93,7 +91,6 @@ const Home = () => {
     });
   };
 
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -109,13 +106,12 @@ const Home = () => {
           if (Array.isArray(category) && category.length > 0) {
             const enhancedProducts = category.map((product) => ({
               ...product,
-              thumbnail: product.thumbnail || product.image?.[0] || "", // Fallback to empty string
+              thumbnail: product.thumbnail || product.image?.[0] || "",
               price: product.price || Math.floor(Math.random() * 100) + 10,
               discountPercentage:
                 product.discountPercentage ||
                 Math.floor(Math.random() * 30) + 5,
               id: product.id || Math.random().toString(36).substr(2, 9),
-              // Add any other default values you need
             }));
             allProducts.push(...enhancedProducts);
           }
@@ -137,7 +133,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  // Time left calculation
   function getTimeLeft(target) {
     const now = new Date();
     const difference = target - now;
@@ -162,7 +157,6 @@ const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Scroll handler
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -189,7 +183,6 @@ const Home = () => {
     }
   };
 
-  // Memoized featured products
   const featuredProducts = useMemo(() => {
     return products.filter((product) => product.discountPercentage > 15);
   }, [products]);
@@ -261,22 +254,28 @@ const Home = () => {
         </div>
 
         {/* Carousel Section */}
-        <div className="lg:col-span-3 h-[45vh] ">
-          <Carousel autoplay className="rounded-xl h-full">
+        <div className="lg:col-span-3 h-[45vh] -z-10">
+          <Carousel
+            autoplay
+            loop
+            prevArrow={() => <></>}
+            nextArrow={() => <></>}
+            className="rounded-xl h-full"
+          >
             <img
-              src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
+              src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2560&q=80"
               loading="lazy"
               alt="image 1"
               className="h-full w-full object-cover"
             />
             <img
-              src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
+              src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80"
               loading="lazy"
               alt="image 2"
               className="h-full w-full object-cover"
             />
             <img
-              src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
+              src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80"
               loading="lazy"
               alt="image 3"
               className="h-full w-full object-cover"

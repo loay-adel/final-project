@@ -28,6 +28,9 @@ module.exports = withMT({
       fontFamily: {
         mainFont: ["Poppins", "sans-serif"],
       },
+      backgroundImage: {
+        customGradient: "linear-gradient(to bottom, #333333, #e0b0ff)",
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],

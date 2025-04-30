@@ -2,17 +2,19 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { useAuth } from "../authentucation/authContext";
 import { login } from "../authentucation/auth";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [isForgetPasswordOpen, setIsForgetPasswordOpen] = useState(false);
   const [credentials, setCredentials] = useState({
-    emailOrPhone: "",
+    email: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { login: authContextLogin } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,11 +27,15 @@ const Signin = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!credentials.emailOrPhone.trim()) {
-      newErrors.emailOrPhone = "Email or Phone Number is required";
+    if (!credentials.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
+      newErrors.email = "Please enter a valid email";
     }
     if (!credentials.password) {
       newErrors.password = "Password is required";
+    } else if (credentials.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
     }
     return newErrors;
   };
@@ -46,14 +52,27 @@ const Signin = () => {
     }
 
     try {
-      await login(credentials);
+      const user = await login({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      // Update auth context
+      authContextLogin(user);
 
       Swal.fire({
         title: "Login Successful!",
         icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
       });
       navigate("/");
     } catch (error) {
+      Swal.fire({
+        title: "Login Failed",
+        text: error.message || "Invalid email or password",
+        icon: "error",
+      });
       setErrors({
         general: error.message || "Login failed. Please try again.",
       });
@@ -72,8 +91,14 @@ const Signin = () => {
       setForgetLoading(true);
 
       try {
-        // This would call your password reset endpoint
-        // await resetPassword(email);
+        // Validate email
+        if (!email.trim()) {
+          setForgetErrors({ email: "Email is required" });
+          return;
+        }
+
+        // Simulate sending reset email
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         Swal.fire({
           title: "Reset Email Sent",
@@ -96,7 +121,8 @@ const Signin = () => {
           <button
             onClick={onClose}
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            aria-label="Close">
+            aria-label="Close"
+          >
             ×
           </button>
           <h1 className="mb-1 text-xl font-bold text-gray-900 md:text-2xl dark:text-white">
@@ -112,7 +138,10 @@ const Signin = () => {
                 variant="standard"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (forgetErrors.email) setForgetErrors({});
+                }}
                 error={!!forgetErrors.email}
               />
               {forgetErrors.email && (
@@ -123,7 +152,8 @@ const Signin = () => {
               type="submit"
               className="w-full bg-main"
               size="lg"
-              disabled={forgetLoading}>
+              disabled={forgetLoading}
+            >
               {forgetLoading ? "Sending..." : "Reset Password"}
             </Button>
           </form>
@@ -153,15 +183,15 @@ const Signin = () => {
           <form onSubmit={handleSubmit} className="mt-8 mb-2 space-y-[1.5em]">
             <div>
               <Input
-                name="emailOrPhone"
+                name="email"
                 variant="standard"
-                label="Email Or Phone Number"
-                value={credentials.emailOrPhone}
+                label="Email"
+                value={credentials.email}
                 onChange={handleChange}
-                error={!!errors.emailOrPhone}
+                error={!!errors.email}
               />
-              {errors.emailOrPhone && (
-                <p className="text-red-500 text-sm">{errors.emailOrPhone}</p>
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
               )}
             </div>
             <div>
@@ -184,13 +214,15 @@ const Signin = () => {
                 type="submit"
                 className="w-full sm:w-auto bg-main rounded-[0.5em] p-[0.8em] px-10"
                 size="lg"
-                disabled={loading}>
+                disabled={loading}
+              >
                 {loading ? "Logging In..." : "Log In"}
               </Button>
               <button
                 type="button"
-                className="mt-2 sm:mt-0 text-main"
-                onClick={() => setIsForgetPasswordOpen(true)}>
+                className="mt-2 sm:mt-0 text-main hover:underline"
+                onClick={() => setIsForgetPasswordOpen(true)}
+              >
                 Forget Password?
               </button>
             </div>
@@ -198,19 +230,20 @@ const Signin = () => {
 
           <Typography color="gray" className="mt-4 text-center font-normal">
             Don't have an account?{" "}
-            <Link to="/signup" className="font-medium text-blue-600">
+            <Link
+              to="/signup"
+              className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+            >
               Sign Up
             </Link>
           </Typography>
         </Card>
       </div>
 
-      {isForgetPasswordOpen && (
-        <ForgetPassword
-          isOpen={isForgetPasswordOpen}
-          onClose={() => setIsForgetPasswordOpen(false)}
-        />
-      )}
+      <ForgetPassword
+        isOpen={isForgetPasswordOpen}
+        onClose={() => setIsForgetPasswordOpen(false)}
+      />
     </div>
   );
 };
