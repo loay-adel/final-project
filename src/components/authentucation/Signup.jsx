@@ -20,7 +20,6 @@ const Signup = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -49,7 +48,7 @@ const Signup = () => {
         newErrors.email = "Invalid email format";
       }
       if (formData.phone.trim() && !phoneRegex.test(formData.phone)) {
-        newErrors.phone = "Invalid phone number (10-15 digits)";
+        newErrors.phone = "Invalid phone number (10–15 digits)";
       }
     }
 
@@ -74,38 +73,46 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     setLoading(true);
     try {
-      // Prepare user data for signup
       const userData = {
+        id: `u${Date.now() + Math.floor(Math.random() * 10)}`,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        phone: formData.phone,
         password: formData.password,
+        addresses: [
+          {
+            street: "",
+            city: "",
+            state: "",
+            zip: "",
+            country: "",
+            isDefault: true,
+          },
+        ],
+        phone: formData.phone,
         role: "customer",
+        createdAt: new Date().toISOString(),
+        wishlist: [],
+        cart: [],
       };
 
       const data = await signup(userData);
-
-      // Show success message
       Swal.fire({
         title: "Account Created!",
         text: "You have been successfully registered!",
         icon: "success",
         confirmButtonText: "Continue",
       }).then(() => {
-        navigate("/"); // Redirect to home page after signup
+        navigate("/signin");
       });
     } catch (error) {
       let errorMessage = "Signup failed. Please try again.";
-
       if (error.message.includes("email")) {
         setErrors({ email: "Email already exists" });
       } else if (error.message.includes("phone")) {
@@ -119,7 +126,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex font-mainFont flex-col-reverse xl:flex-row items-center justify-center gap-8 pt-[2em] pb-[4.5em]">
+    <div className="flex flex-col-reverse xl:flex-row items-center justify-center gap-8 pt-[2em] pb-[4.5em]">
       <div className="w-full xl:w-1/2">
         <img
           src="/dl.beatsnoop 1.webp"
@@ -133,20 +140,20 @@ const Signup = () => {
             <Typography
               variant="h2"
               color="blue-gray"
-              className="text-2xl sm:text-3xl md:text-4xl">
+              className="text-2xl sm:text-3xl md:text-4xl"
+            >
               Create an account
             </Typography>
             <Typography
               color="black"
-              className="mt-1 font-normal text-sm sm:text-base">
+              className="mt-1 font-normal text-sm sm:text-base"
+            >
               Enter your details below
             </Typography>
           </div>
-
           {errors.general && (
             <p className="text-red-500 text-center mt-4">{errors.general}</p>
           )}
-
           <form onSubmit={handleSubmit} className="mt-8 mb-2" noValidate>
             <div className="space-y-4">
               <div>
@@ -222,15 +229,14 @@ const Signup = () => {
                 )}
               </div>
             </div>
-
             <div className="space-y-4 mt-6">
               <Button
                 type="submit"
                 className="bg-main p-4 text-xl capitalize w-full"
-                disabled={loading}>
+                disabled={loading}
+              >
                 {loading ? "Creating Account..." : "Create Account"}
               </Button>
-
               <Typography color="gray" className="text-center font-normal">
                 Already have an account?{" "}
                 <Link to="/signin" className="font-medium text-blue-600">

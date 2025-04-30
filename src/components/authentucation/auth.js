@@ -1,144 +1,118 @@
 // src/services/auth.js
+import bcrypt from "bcryptjs";
+
 const BASE_URL = "http://localhost:5000";
+
+// Password hashing utility
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
+
+// Password verification utility
+const verifyPassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword);
+};
+
+const handleResponse = async (response) => {
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Request failed");
+  }
+  return response.json();
+};
 
 export const signup = async (userData) => {
   try {
+    // Check if user already exists by email
+    const usersResponse = await fetch(
+      `${BASE_URL}/users?email=${userData.email}`
+    );
+    const existingUsers = await handleResponse(usersResponse);
+
+    if (existingUsers.length > 0) {
+      throw new Error("User with this email already exists");
+    }
+
+    // Hash password before storing
+    const hashedPassword = await hashPassword(userData.password);
+    const userWithHashedPassword = {
+      ...userData,
+      password: hashedPassword,
+    };
+
     const response = await fetch(`${BASE_URL}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(userWithHashedPassword),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Signup failed");
-    }
+    const newUser = await handleResponse(response);
 
-    const data = await response.json();
-
-    // Handle direct user object response (without nesting)
-    const user = data.id ? data : data.user;
-
-    if (!user?.id) {
-      throw new Error("User ID not found in response");
-    }
-
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("userData", JSON.stringify(user));
-    return user;
+    // Store user ID and minimal info in localStorage
+    localStorage.setItem("userId", newUser.id);
+    return {
+      id: newUser.id,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      email: newUser.email,
+    };
   } catch (error) {
+    console.error("Signup error:", error);
     throw error;
   }
 };
 
 export const login = async (credentials) => {
   try {
-    // First find user by email/phone
-    const usersResponse = await fetch(`${BASE_URL}/users`);
-    if (!usersResponse.ok) {
-      throw new Error("Failed to fetch users");
+    const response = await fetch(
+      `${BASE_URL}/users?email=${credentials.email}`
+    );
+    const users = await handleResponse(response);
+
+    if (users.length === 0) {
+      throw new Error("User not found");
     }
 
-    const allUsers = await usersResponse.json();
-    const user = allUsers.find(
-      (u) =>
-        (u.email === credentials.emailOrPhone ||
-          u.phone === credentials.emailOrPhone) &&
-        u.password === credentials.password
-    );
+    const user = users[0]; // Assuming emails are unique
+    const isValid = await verifyPassword(credentials.password, user.password);
 
-    if (!user) {
+    if (!isValid) {
       throw new Error("Invalid credentials");
     }
 
     localStorage.setItem("userId", user.id);
-    localStorage.setItem("userData", JSON.stringify(user));
-    return user;
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    };
   } catch (error) {
+    console.error("Login error:", error);
     throw error;
   }
 };
 
-export const fetchUserById = async (userId) => {
+export const fetchCurrentUser = async () => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) return null;
+
   try {
     const response = await fetch(`${BASE_URL}/users/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch user");
-    return await response.json();
+    const user = await handleResponse(response);
+    return {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    };
   } catch (error) {
-    throw error;
-  }
-};
-
-export const updateUser = async (userId, updates) => {
-  try {
-    const response = await fetch(`${BASE_URL}/users/${userId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updates),
-    });
-    if (!response.ok) throw new Error("Failed to update user");
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const fetchProducts = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/products`);
-    if (!response.ok) throw new Error("Failed to fetch products");
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const createOrder = async (orderData) => {
-  try {
-    const userId = localStorage.getItem("userId");
-    const response = await fetch(`${BASE_URL}/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...orderData, userId }),
-    });
-    if (!response.ok) throw new Error("Failed to create order");
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const fetchUserOrders = async () => {
-  try {
-    const userId = localStorage.getItem("userId");
-    const response = await fetch(`${BASE_URL}/orders?userId=${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch orders");
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const createReview = async (reviewData) => {
-  try {
-    const userId = localStorage.getItem("userId");
-    const response = await fetch(`${BASE_URL}/reviews`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...reviewData, userId }),
-    });
-    if (!response.ok) throw new Error("Failed to create review");
-    return await response.json();
-  } catch (error) {
-    throw error;
+    console.error("Failed to fetch user:", error);
+    logout(); // Auto-logout if user can't be fetched
+    return null;
   }
 };
 
@@ -147,12 +121,16 @@ export const isAuthenticated = () => {
 };
 
 export const getCurrentUser = () => {
-  const userData = localStorage.getItem("userData");
-  return userData ? JSON.parse(userData) : null;
+  const userId = localStorage.getItem("userId");
+  return userId ? { id: userId } : null;
 };
 
 export const logout = () => {
   localStorage.removeItem("userId");
-  localStorage.removeItem("userData");
-  window.location.href = "/signin";
+};
+
+// Utility function to clear all auth-related data
+export const clearAuthData = () => {
+  logout();
+  // Add any other auth-related cleanup here
 };
