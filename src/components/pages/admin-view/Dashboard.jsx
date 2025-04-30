@@ -13,6 +13,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -35,13 +36,21 @@ const Dashboard = () => {
   const [coupons, setCoupons] = useState([]);
   const [settings, setSettings] = useState({});
 
-  // Fetch all data
+  const API_BASE_URL = "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        const requests = [
+          axios.get(`${API_BASE_URL}/products`).catch(handleApiError),
+          axios.get(`${API_BASE_URL}/users`).catch(handleApiError),
+          axios.get(`${API_BASE_URL}/orders`).catch(handleApiError),
+          axios.get(`${API_BASE_URL}/reviews`).catch(handleApiError),
+          axios.get(`${API_BASE_URL}/coupons`).catch(handleApiError),
+          axios.get(`${API_BASE_URL}/settings`).catch(handleApiError),
+        ];
 
-        // Fetch all endpoints in parallel
         const [
           productsRes,
           usersRes,
@@ -49,31 +58,24 @@ const Dashboard = () => {
           reviewsRes,
           couponsRes,
           settingsRes,
-        ] = await Promise.all([
-          axios.get("http://localhost:5000/products"),
-          axios.get("http://localhost:5000/users"),
-          axios.get("http://localhost:5000/orders"),
-          axios.get("http://localhost:5000/reviews"),
-          axios.get("http://localhost:5000/coupons"),
-          axios.get("http://localhost:5000/settings"),
-        ]);
+        ] = await Promise.all(requests);
 
-        setProducts(productsRes.data);
-        setUsers(usersRes.data);
-        setOrders(ordersRes.data);
-        setReviews(reviewsRes.data);
-        setCoupons(couponsRes.data);
-        setSettings(settingsRes.data);
+        setProducts(productsRes?.data || []);
+        setUsers(usersRes?.data || []);
+        setOrders(ordersRes?.data || []);
+        setReviews(reviewsRes?.data || []);
+        setCoupons(couponsRes?.data || []);
+        setSettings(settingsRes?.data || {});
 
-        // Calculate stats
-        const revenue = ordersRes.data.reduce(
-          (sum, order) => sum + order.amount,
+        const revenue = (ordersRes?.data || []).reduce(
+          (sum, order) => sum + (order.amount || 0),
           0
         );
+
         setStats({
-          totalProducts: productsRes.data.length,
-          totalUsers: usersRes.data.length,
-          totalOrders: ordersRes.data.length,
+          totalProducts: productsRes?.data?.length || 0,
+          totalUsers: usersRes?.data?.length || 0,
+          totalOrders: ordersRes?.data?.length || 0,
           totalRevenue: revenue,
         });
       } catch (err) {
@@ -84,48 +86,21 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [API_BASE_URL]);
 
-  // Render loading state
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-lg font-medium text-gray-700">
-            Loading dashboard...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleApiError = (error) => {
+    console.error("API Error:", error);
+    return { data: [] };
+  };
 
-  // Render error state
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="text-center p-6 bg-white rounded-lg shadow-md max-w-md">
-          <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Error Loading Data
-          </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
+  if (error) return <ErrorScreen error={error} />;
 
-  // Main dashboard render
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Mobile menu button */}
       <button
+        aria-label="Toggle mobile menu"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-gray-800 text-white"
       >
@@ -135,19 +110,19 @@ const Dashboard = () => {
       {/* Sidebar */}
       <div
         className={`${sidebarOpen ? "w-64" : "w-20"} ${
-          mobileMenuOpen ? "block" : "hidden"
-        } md:block bg-gray-800 text-white transition-all duration-300 fixed h-full z-40`}
+          mobileMenuOpen ? "block" : "hidden md:block"
+        } bg-gray-800 text-white transition-all duration-300 fixed h-full z-40`}
       >
         <div className="p-4 flex items-center justify-between border-b border-gray-700">
           {sidebarOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
           <button
+            aria-label="Toggle sidebar"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 rounded-full hover:bg-gray-700"
           >
             {sidebarOpen ? "<" : ">"}
           </button>
         </div>
-
         <nav className="mt-6">
           <NavItem
             icon={<FiHome size={20} />}
@@ -210,15 +185,13 @@ const Dashboard = () => {
         {/* Top navigation */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between p-4">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
             <div className="flex items-center space-x-4">
               <button className="p-2 rounded-full hover:bg-gray-100 relative">
@@ -252,9 +225,9 @@ const Dashboard = () => {
   );
 };
 
-// Component for navigation items
-const NavItem = ({ icon, text, active, onClick, sidebarOpen }) => {
-  return (
+// Enhanced NavItem component with Link support
+const NavItem = ({ icon, text, active, onClick, sidebarOpen, to }) => {
+  const content = (
     <button
       onClick={onClick}
       className={`flex items-center w-full p-4 ${
@@ -265,14 +238,46 @@ const NavItem = ({ icon, text, active, onClick, sidebarOpen }) => {
       {sidebarOpen && <span className="ml-3">{text}</span>}
     </button>
   );
+
+  return to ? <Link to={to}>{content}</Link> : content;
 };
+
+// Loading state component
+const LoadingScreen = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="text-center">
+      <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p className="mt-4 text-lg font-medium text-gray-700">
+        Loading dashboard...
+      </p>
+    </div>
+  </div>
+);
+
+// Error state component
+const ErrorScreen = ({ error }) => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="text-center p-6 bg-white rounded-lg shadow-md max-w-md">
+      <div className="text-red-500 text-4xl mb-4">⚠️</div>
+      <h2 className="text-xl font-bold text-gray-800 mb-2">
+        Error Loading Data
+      </h2>
+      <p className="text-gray-600 mb-4">{error}</p>
+      <button
+        onClick={() => window.location.reload()}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+      >
+        Retry
+      </button>
+    </div>
+  </div>
+);
 
 // Dashboard Tab Component
 const DashboardTab = ({ stats, recentOrders }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard
@@ -300,7 +305,6 @@ const DashboardTab = ({ stats, recentOrders }) => {
           color="bg-yellow-100 text-yellow-600"
         />
       </div>
-
       {/* Recent Orders */}
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">Recent Orders</h3>
@@ -384,7 +388,6 @@ const ProductsTab = ({ products }) => {
           Add Product
         </button>
       </div>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -466,7 +469,6 @@ const UsersTab = ({ users }) => {
           Add User
         </button>
       </div>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -548,7 +550,6 @@ const OrdersTab = ({ orders }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Orders</h2>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -622,7 +623,6 @@ const ReviewsTab = ({ reviews }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Product Reviews</h2>
-
       <div className="bg-white rounded-lg shadow p-6">
         <div className="space-y-6">
           {reviews.map((review) => (
@@ -681,7 +681,6 @@ const CouponsTab = ({ coupons }) => {
           Create Coupon
         </button>
       </div>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -759,7 +758,10 @@ const SettingsTab = ({ settings }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically make an API call to save the settings
+    if (!formData.storeName || !formData.storeEmail) {
+      alert("Store Name and Store Email are required.");
+      return;
+    }
     console.log("Settings saved:", formData);
     alert("Settings saved successfully!");
   };
@@ -767,7 +769,6 @@ const SettingsTab = ({ settings }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6">Settings</h2>
-
       <div className="bg-white rounded-lg shadow p-6">
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
@@ -784,6 +785,7 @@ const SettingsTab = ({ settings }) => {
                     value={formData.storeName || ""}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
                   />
                 </div>
                 <div>
@@ -796,6 +798,7 @@ const SettingsTab = ({ settings }) => {
                     value={formData.storeEmail || ""}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    required
                   />
                 </div>
                 <div>
@@ -830,7 +833,6 @@ const SettingsTab = ({ settings }) => {
                 </div>
               </div>
             </div>
-
             <div>
               <h3 className="text-lg font-medium mb-4">Maintenance Mode</h3>
               <div className="flex items-center">
@@ -864,7 +866,6 @@ const SettingsTab = ({ settings }) => {
                 </div>
               )}
             </div>
-
             <div className="pt-4 border-t border-gray-200">
               <button
                 type="submit"
