@@ -1,7 +1,41 @@
 import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../authentucation/authContext";
+import Swal from "sweetalert2";
+
+
 
 const Account = () => {
+
+  const { user } = useAuth()
+
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    email: user?.email,
+    address: user?.address,
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id]: value,
+    });
+  };
+
+  const handleSaveChanges = () => {
+    Swal.fire({
+      title: "Changes saved successfully!",
+      icon: "success",
+      draggable: true,
+    });
+  };
+
   return (
     <div className="container mx-auto p-5">
       <div className="flex flex-col md:flex-row justify-between items-center mb-5">
@@ -14,7 +48,7 @@ const Account = () => {
         </div>
         <div className="mt-3 md:mt-0">
           <span>Welcome!</span>
-          <span className="text-red-600"> User Name</span>
+          <span className="text-red-600"> {formData.firstName}</span>
         </div>
       </div>
       <div className="flex flex-col md:flex-row gap-4">
@@ -46,6 +80,8 @@ const Account = () => {
               <input
                 type="text"
                 id="fName"
+                value={formData.firstName}
+                onChange={handleChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="First Name"
               />
@@ -59,6 +95,8 @@ const Account = () => {
               <input
                 type="text"
                 id="lName"
+                value={formData.lastName}
+                onChange={handleChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="Last Name"
               />
@@ -74,6 +112,8 @@ const Account = () => {
               <input
                 type="email"
                 id="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="mahmoud@gmail.com"
               />
@@ -87,6 +127,8 @@ const Account = () => {
               <input
                 type="text"
                 id="address"
+                value={formData.address}
+                onChange={handleChange}
                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="Kingston, 5236, United State"
               />
@@ -119,7 +161,7 @@ const Account = () => {
           </div>
           <div className="flex justify-end gap-4">
             <button className="text-gray-500">Cancel</button>
-            <button className="bg-red-600 text-white px-4 py-2 hover:bg-red-800 rounded">
+            <button className="bg-red-600 text-white px-4 py-2 hover:bg-red-800 rounded" onClick={handleSaveChanges} >
               Save Changes
             </button>
           </div>
