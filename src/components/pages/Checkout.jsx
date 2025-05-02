@@ -35,13 +35,13 @@ const Checkout = () => {
       formValues.email
     ) {
       Swal.fire({
-        title: "Order placed successfully!",
+        title: "Order completed successfully!",
         icon: "success",
         draggable: true,
       });
     } else {
       Swal.fire({
-        title: "Please fill in all the fields.",
+        title: "Please enter information in all fields.",
         icon: "warning",
         confirmButtonText: "OK",
       });
