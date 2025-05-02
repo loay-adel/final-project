@@ -209,7 +209,16 @@ const Header = () => {
           <Menu>
             <MenuHandler>
               <span className="cursor-pointer">
-                {isAuthenticated && user?.firstName}
+                {isAuthenticated && user && (
+                  <MenuHandler>
+                    <img
+                      src="/user.png"
+                      className="cursor-pointer text-3xl hover:scale-105 hover:cursor-pointer"
+                      alt=""
+                    />
+                  </MenuHandler>
+                )}
+
               </span>
             </MenuHandler>
             {isAuthenticated && (
@@ -217,7 +226,7 @@ const Header = () => {
                 <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
                   <FiUser />
                   <Typography variant="small" className="font-medium">
-                    <Link to="/account">My Profile</Link>
+                    <Link to="/account">My Profile {isAuthenticated && user?.firstName}</Link>
                   </Typography>
                 </MenuItem>
                 <hr className="my-2 border-gray-200" />
