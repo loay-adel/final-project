@@ -68,14 +68,10 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Cart operations with backend sync
+  // Cart operations with backend/local storage sync
   const addToCart = useCallback(
-    async (product) => {
+    (product) => {
       const userId = getUserId();
-      if (!userId) {
-        console.error("User ID not found");
-        return;
-      }
 
       setCart((prevCart) => {
         const existing = prevCart.find((item) => item.id === product.id);
@@ -91,7 +87,11 @@ export const CartProvider = ({ children }) => {
             )
           : [...prevCart, { ...product, quantity: 1, subtotal: product.price }];
 
-        updateUserData(userId, { cart: newCart });
+        if (userId) {
+          updateUserData(userId, { cart: newCart });
+        } else {
+          localStorage.setItem("guestCart", JSON.stringify(newCart));
+        }
         return newCart;
       });
     },
@@ -99,9 +99,8 @@ export const CartProvider = ({ children }) => {
   );
 
   const increaseQty = useCallback(
-    async (id) => {
+    (id) => {
       const userId = getUserId();
-      if (!userId) return;
 
       setCart((prevCart) => {
         const newCart = prevCart.map((item) =>
@@ -113,7 +112,12 @@ export const CartProvider = ({ children }) => {
               }
             : item
         );
-        updateUserData(userId, { cart: newCart });
+
+        if (userId) {
+          updateUserData(userId, { cart: newCart });
+        } else {
+          localStorage.setItem("guestCart", JSON.stringify(newCart));
+        }
         return newCart;
       });
     },
@@ -121,9 +125,8 @@ export const CartProvider = ({ children }) => {
   );
 
   const decreaseQty = useCallback(
-    async (id) => {
+    (id) => {
       const userId = getUserId();
-      if (!userId) return;
 
       setCart((prevCart) => {
         const newCart = prevCart
@@ -137,7 +140,12 @@ export const CartProvider = ({ children }) => {
               : item
           )
           .filter((item) => item.quantity > 0);
-        updateUserData(userId, { cart: newCart });
+
+        if (userId) {
+          updateUserData(userId, { cart: newCart });
+        } else {
+          localStorage.setItem("guestCart", JSON.stringify(newCart));
+        }
         return newCart;
       });
     },
@@ -145,13 +153,17 @@ export const CartProvider = ({ children }) => {
   );
 
   const removeFromCart = useCallback(
-    async (id) => {
+    (id) => {
       const userId = getUserId();
-      if (!userId) return;
 
       setCart((prevCart) => {
         const newCart = prevCart.filter((item) => item.id !== id);
-        updateUserData(userId, { cart: newCart });
+
+        if (userId) {
+          updateUserData(userId, { cart: newCart });
+        } else {
+          localStorage.setItem("guestCart", JSON.stringify(newCart));
+        }
         return newCart;
       });
     },
@@ -160,26 +172,31 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = useCallback(async () => {
     const userId = getUserId();
-    if (!userId) return;
 
     setCart([]);
-    await updateUserData(userId, { cart: [] });
+
+    if (userId) {
+      await updateUserData(userId, { cart: [] });
+    } else {
+      localStorage.setItem("guestCart", "[]");
+    }
   }, [getUserId, updateUserData]);
 
   // Wishlist operations
   const addToWishlist = useCallback(
-    async (product) => {
+    (product) => {
       const userId = getUserId();
-      if (!userId) {
-        console.error("User ID not found");
-        return;
-      }
 
       setWishlist((prev) => {
         const newWishlist = prev.includes(product.id)
           ? prev
           : [...prev, product.id];
-        updateUserData(userId, { wishlist: newWishlist });
+
+        if (userId) {
+          updateUserData(userId, { wishlist: newWishlist });
+        } else {
+          localStorage.setItem("guestWishlist", JSON.stringify(newWishlist));
+        }
         return newWishlist;
       });
     },
@@ -187,13 +204,17 @@ export const CartProvider = ({ children }) => {
   );
 
   const removeFromWishlist = useCallback(
-    async (id) => {
+    (id) => {
       const userId = getUserId();
-      if (!userId) return;
 
       setWishlist((prev) => {
         const newWishlist = prev.filter((itemId) => itemId !== id);
-        updateUserData(userId, { wishlist: newWishlist });
+
+        if (userId) {
+          updateUserData(userId, { wishlist: newWishlist });
+        } else {
+          localStorage.setItem("guestWishlist", JSON.stringify(newWishlist));
+        }
         return newWishlist;
       });
     },
@@ -210,12 +231,20 @@ export const CartProvider = ({ children }) => {
   // Initialize user data
   const initializeUserData = useCallback(async () => {
     const userId = getUserId();
-    if (!userId) return;
 
-    const userData = await fetchUserData(userId);
-    if (userData) {
-      setCart(userData.cart || []);
-      setWishlist(userData.wishlist || []);
+    if (userId) {
+      const userData = await fetchUserData(userId);
+      if (userData) {
+        setCart(userData.cart || []);
+        setWishlist(userData.wishlist || []);
+      }
+    } else {
+      // Load guest data from localStorage
+      const guestCart = JSON.parse(localStorage.getItem("guestCart")) || [];
+      const guestWishlist =
+        JSON.parse(localStorage.getItem("guestWishlist")) || [];
+      setCart(guestCart);
+      setWishlist(guestWishlist);
     }
   }, [getUserId, fetchUserData]);
 
