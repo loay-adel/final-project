@@ -68,7 +68,14 @@ const Cart = () => {
 
       <section className="bg-white py-4 md:py-8">
         <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-          <h1 className="text-2xl font-bold mb-6">Your Cart ({cartCount})</h1>
+          {cart.length > 0 && (
+            <h1 className="text-3xl font-semibold text-gray-800 flex justify-center items-center gap-2 mb-6">
+              Items in Your Cart :
+              <span className="px-4 py-2 bg-red-600 text-white rounded-full text-xl font-semibold">
+                {cartCount}
+              </span>
+            </h1>
+          )}
 
           <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
@@ -79,11 +86,11 @@ const Cart = () => {
                     <table className="w-full text-left">
                       <thead>
                         <tr className="border-b">
-                          <th className="py-4 font-medium">Product</th>
-                          <th className="py-4 font-medium">Price</th>
-                          <th className="py-4 font-medium">Quantity</th>
-                          <th className="py-4 font-medium">Subtotal</th>
-                          <th className="py-4 font-medium">Action</th>
+                          <th className="py-2">Product</th>
+                          <th className="py-2">Price</th>
+                          <th className="py-2">Quantity</th>
+                          <th className="py-2">Subtotal</th>
+                          <th className="py-2">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -99,14 +106,14 @@ const Cart = () => {
                                 alt={item.title}
                               />
                               <span className="font-medium">
-                                {item.title.split(" ").slice(0, 3).join(" ")}
+                                {item.title.split(" ").slice(0, 2).join(" ")}
                               </span>
                             </td>
                             <td className="py-4">${item.price.toFixed(2)}</td>
                             <td className="py-4">
                               <div className="flex items-center gap-2">
                                 <IconButton
-                                  variant="outlined"
+                                  color="red"
                                   size="sm"
                                   onClick={() => decreaseQty(item.id)}
                                   disabled={item.quantity <= 1}
@@ -117,7 +124,7 @@ const Cart = () => {
                                   {item.quantity}
                                 </span>
                                 <IconButton
-                                  variant="outlined"
+                                  color="red"
                                   size="sm"
                                   onClick={() => increaseQty(item.id)}
                                 >
@@ -130,7 +137,7 @@ const Cart = () => {
                             </td>
                             <td className="py-4">
                               <button
-                                className="text-red-600 hover:text-red-800 transition"
+                                className="text-red-600 hover:text-red-800 transition font-medium"
                                 onClick={() => handleRemoveItem(item.id)}
                               >
                                 Remove
@@ -177,7 +184,7 @@ const Cart = () => {
                           />
                           <div className="flex-1">
                             <h3 className="font-medium">
-                              {item.title.split(" ").slice(0, 3).join(" ")}
+                              {item.title.split(" ").slice(0, 1).join(" ")}
                             </h3>
                             <p className="text-gray-600 mt-1">
                               ${item.price.toFixed(2)}
@@ -185,7 +192,7 @@ const Cart = () => {
                             <div className="flex items-center justify-between mt-3">
                               <div className="flex items-center gap-2">
                                 <IconButton
-                                  variant="outlined"
+                                  color="red"
                                   size="sm"
                                   onClick={() => decreaseQty(item.id)}
                                   disabled={item.quantity <= 1}
@@ -196,7 +203,7 @@ const Cart = () => {
                                   {item.quantity}
                                 </span>
                                 <IconButton
-                                  variant="outlined"
+                                  color="red"
                                   size="sm"
                                   onClick={() => increaseQty(item.id)}
                                 >
@@ -204,7 +211,7 @@ const Cart = () => {
                                 </IconButton>
                               </div>
                               <button
-                                className="text-red-600 hover:text-red-800 text-sm"
+                                className="text-red-600 hover:text-red-800 text-sm font-medium"
                                 onClick={() => handleRemoveItem(item.id)}
                               >
                                 Remove
@@ -244,14 +251,13 @@ const Cart = () => {
                       to="/product"
                       className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-center transition"
                     >
-                      Continue Shopping
+                      Return To Shoping
                     </Link>
                     <button
                       onClick={handleClearCart}
-                      disabled={cartCount === 0}
-                      className={`px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition ${
-                        cartCount === 0 ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
+
+                      className={`px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition ${cartCount === 0 ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
                     >
                       Clear Cart
                     </button>
@@ -271,7 +277,8 @@ const Cart = () => {
                           />
                           <button
                             type="button"
-                            className="rounded-lg bg-gray-800 hover:bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition"
+
+                            className="rounded-lg bg-red-600 hover:bg-red-700 px-5 py-2.5 text-sm font-medium text-white transition"
                           >
                             Apply
                           </button>
