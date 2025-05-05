@@ -2,8 +2,8 @@ import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Swal from "sweetalert2";
-import { useAuth } from "../authentucation/authContext";
-import { login } from "../authentucation/auth";
+import { useAuth } from "./authContext";
+
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -14,12 +14,11 @@ const Signin = () => {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { login: authContextLogin } = useAuth();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
-    // Clear error when user types
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -52,13 +51,10 @@ const Signin = () => {
     }
 
     try {
-      const user = await login({
+      await login({
         email: credentials.email,
         password: credentials.password,
       });
-
-      // Update auth context
-      authContextLogin(user);
 
       Swal.fire({
         title: "Login Successful!",
@@ -91,13 +87,11 @@ const Signin = () => {
       setForgetLoading(true);
 
       try {
-        // Validate email
         if (!email.trim()) {
           setForgetErrors({ email: "Email is required" });
           return;
         }
 
-        // Simulate sending reset email
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         Swal.fire({

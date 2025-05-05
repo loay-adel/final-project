@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { signup } from "../authentucation/auth";
+import { useAuth } from "./authContext";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,8 +58,7 @@ const Signup = () => {
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password =
-        "Password must contain at least one uppercase letter";
+      newErrors.password = "Password must contain at least one uppercase letter";
     } else if (!/[0-9]/.test(formData.password)) {
       newErrors.password = "Password must contain at least one number";
     }
@@ -78,31 +78,16 @@ const Signup = () => {
       return;
     }
     setLoading(true);
+
     try {
-      const userData = {
-        id: `u${Date.now() + Math.floor(Math.random() * 10)}`,
+      await signup({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
-        password: formData.password,
-        addresses: [
-          {
-            street: "",
-            city: "",
-            state: "",
-            zip: "",
-            country: "",
-            isDefault: true,
-          },
-        ],
         phone: formData.phone,
-        role: "customer",
-        createdAt: new Date().toISOString(),
-        wishlist: [],
-        cart: [],
-      };
+        password: formData.password,
+      });
 
-      const data = await signup(userData);
       Swal.fire({
         title: "Account Created!",
         text: "You have been successfully registered!",
@@ -112,14 +97,14 @@ const Signup = () => {
         navigate("/signin");
       });
     } catch (error) {
-      let errorMessage = "Signup failed. Please try again.";
-      if (error.message.includes("email")) {
-        setErrors({ email: "Email already exists" });
-      } else if (error.message.includes("phone")) {
-        setErrors({ phone: "Phone number already exists" });
-      } else {
-        setErrors({ general: error.message || errorMessage });
-      }
+      Swal.fire({
+        title: "Signup Failed",
+        text: error.message || "Could not create account",
+        icon: "error",
+      });
+      setErrors({
+        general: error.message || "Signup failed. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -166,9 +151,7 @@ const Signup = () => {
                   error={!!errors.firstName}
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.firstName}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
                 )}
               </div>
               <div>
@@ -223,9 +206,7 @@ const Signup = () => {
                   error={!!errors.confirmPassword}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.confirmPassword}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
                 )}
               </div>
             </div>

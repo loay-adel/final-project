@@ -3,7 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import UserLayout from "./UserLayout";
 import AdminLayout from "./AdminLayout";
 import { CartProvider } from "./context/CartContext";
-import { AuthProvider } from "./components/authentucation/authContext";
+import {AuthProvider} from "./components/authentucation/authContext";
+
 function App() {
   return (
     <CartProvider>

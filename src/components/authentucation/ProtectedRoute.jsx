@@ -1,17 +1,21 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { isAuthenticated } from "../services/auth";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext.jsx";
 
 const ProtectedRoute = ({ children }) => {
-  const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate("/signin");
-    }
-  }, [navigate]);
+  // Show a loading indicator while checking authentication status
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  return isAuthenticated() ? children : null;
+  // If not authenticated, redirect to the sign-in page
+  if (!isAuthenticated) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  // If authenticated, render the protected content
+  return children;
 };
 
 export default ProtectedRoute;

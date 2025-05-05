@@ -15,9 +15,10 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import { FaRegHeart, FaSearch } from "react-icons/fa";
-import { useAuth } from "../components/authentucation/authContext";
+
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { CartContext } from "../context/CartContext";
+import { useAuth } from "./authentucation/authContext";
 
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
