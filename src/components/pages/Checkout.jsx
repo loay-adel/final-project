@@ -159,7 +159,7 @@ const Checkout = () => {
                       className="w-12 h-12"
                     />
                     <p className="text-sm">
-                      {item.title.split(" ").slice(0, 2).join(" ")}
+                      {item.title.split(" ").slice(0, 3).join(" ")}
                     </p>
                   </div>
                   <p className="text-sm">{item.subtotal.toFixed(2)} EGP</p>
