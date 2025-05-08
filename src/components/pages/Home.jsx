@@ -94,37 +94,40 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(import.meta.env.VITE_URL);
-        const allProducts = [];
+        const response = await axios.get(
+          `${import.meta.env.VITE_URL}/products`
+        );
         const categories = response.data?.categories;
 
         if (!categories || typeof categories !== "object") {
-          throw new Error("Invalid categories data");
+          throw new Error(
+            "Invalid API response structure - missing categories"
+          );
         }
 
-        Object.values(categories).forEach((category) => {
-          if (Array.isArray(category) && category.length > 0) {
-            const enhancedProducts = category.map((product) => ({
-              ...product,
-              thumbnail: product.thumbnail || product.image?.[0] || "",
-              price: product.price || Math.floor(Math.random() * 100) + 10,
-              discountPercentage:
-                product.discountPercentage ||
-                Math.floor(Math.random() * 30) + 5,
-              id: product.id || Math.random().toString(36).substr(2, 9),
-            }));
-            allProducts.push(...enhancedProducts);
-          }
+        const allProducts = Object.values(categories).flatMap((category) => {
+          if (!Array.isArray(category)) return [];
+
+          return category.map((product) => ({
+            ...product,
+            id: product.id,
+            price: product.price ?? 19.99,
+            discountPercentage: product.discountPercentage ?? 10,
+            thumbnail:
+              product.thumbnail || product.image || product.images?.[0] || "",
+            rating: Math.min(product.rating ?? 3, 5),
+          }));
         });
 
-        if (allProducts.length === 0) {
-          console.warn("No products found in any category");
+        if (!allProducts.length) {
+          console.warn("No valid products found in categories");
+          return;
         }
 
         setProducts(allProducts);
       } catch (err) {
-        setError(err.message);
-        console.error("Error fetching products:", err);
+        setError(err.message || "Failed to fetch products");
+        console.error("Fetch error:", err);
       } finally {
         setIsLoading(false);
       }

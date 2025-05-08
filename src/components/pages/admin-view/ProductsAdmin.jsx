@@ -8,337 +8,459 @@ const ProductsAdmin = () => {
   const [editProductId, setEditProductId] = useState(null);
   const [newProduct, setNewProduct] = useState({
     title: "",
-    price: "",
     description: "",
     image: "",
+    price: "",
     discountPercentage: "",
     rating: "",
     availableQuantity: "",
+    thumbnail: "",
+    images: [],
     tags: [],
+    category: "",
   });
 
-  // Fetch products from the backend
+  // Fetch all products and transform the nested structure
   useEffect(() => {
-    fetch("http://localhost:5000/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.categories["Groceries & Pets"]);
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/products");
+        if (!response.ok) throw new Error("Failed to fetch products");
+
+        const data = await response.json();
+
+        // Transform categories object into flat array
+        const allProducts = [];
+        for (const category in data.categories) {
+          data.categories[category].forEach((product) => {
+            allProducts.push({
+              ...product,
+              category: category, // Add category to each product
+            });
+          });
+        }
+
+        setProducts(allProducts);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        Swal.fire("Error", "Failed to load products", "error");
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch products:", err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  // Delete product function with confirmation
-  const deleteProduct = (productId) => {
-    Swal.fire({
+  // Delete product with confirmation
+  const deleteProduct = async (productId, category) => {
+    const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this action!",
+      text: "This cannot be undone!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Perform the delete action (fake it for now)
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product.id !== productId)
-        );
-        Swal.fire("Deleted!", "Your product has been deleted.", "success");
-      }
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
     });
+
+    if (result.isConfirmed) {
+      try {
+        // Optimistic update
+        setProducts((prev) => prev.filter((p) => p.id !== productId));
+
+        const response = await fetch(
+          `http://localhost:5000/products/${encodeURIComponent(
+            category
+          )}/${productId}`,
+          { method: "DELETE" }
+        );
+
+        if (!response.ok) {
+          // Revert if API fails
+          setProducts(products);
+          throw new Error(`Server responded with ${response.status}`);
+        }
+
+        Swal.fire("Deleted!", "Product removed successfully", "success");
+      } catch (error) {
+        console.error("Delete failed:", error);
+        Swal.fire("Error", `Delete failed: ${error.message}`, "error");
+      }
+    }
   };
 
-  // Edit product function with a form
+  // Start editing a product
   const startEditProduct = (product) => {
     setIsEditing(true);
     setEditProductId(product.id);
     setNewProduct({
       title: product.title,
-      price: product.price,
       description: product.description,
       image: product.image,
+      price: product.price,
       discountPercentage: product.discountPercentage,
       rating: product.rating,
       availableQuantity: product.availableQuantity,
-      tags: product.tags,
+      thumbnail: product.thumbnail,
+      images: product.images || [],
+      tags: product.tags || [],
+      category: product.category,
     });
   };
 
-  // Update product function
-  const updateProduct = () => {
-    if (!newProduct.title || !newProduct.price) {
-      Swal.fire("Error", "Please fill in all fields", "error");
-      return;
+  // Update product
+  const updateProduct = async () => {
+    if (!newProduct.title || !newProduct.price || !newProduct.category) {
+      return Swal.fire(
+        "Error",
+        "Title, price and category are required",
+        "error"
+      );
     }
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === editProductId ? { ...product, ...newProduct } : product
-      )
-    );
-    setIsEditing(false);
-    setEditProductId(null);
-    Swal.fire("Updated!", "The product has been updated.", "success");
+
+    try {
+      // Optimistic update
+      setProducts((prev) =>
+        prev.map((p) => (p.id === editProductId ? { ...p, ...newProduct } : p))
+      );
+
+      const response = await fetch(
+        `http://localhost:5000/products/${encodeURIComponent(
+          newProduct.category
+        )}/${editProductId}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProduct),
+        }
+      );
+
+      if (!response.ok) {
+        // Revert if API fails
+        setProducts(products);
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const updatedProduct = await response.json();
+
+      // Ensure UI matches server response
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === editProductId ? { ...p, ...updatedProduct } : p
+        )
+      );
+
+      setIsEditing(false);
+      setEditProductId(null);
+      Swal.fire("Updated!", "Product updated successfully", "success");
+    } catch (error) {
+      console.error("Update failed:", {
+        error: error.message,
+        productId: editProductId,
+        attemptedData: newProduct,
+      });
+      Swal.fire("Error", `Update failed: ${error.message}`, "error");
+    }
   };
 
-  // Add new product function
-  const addProduct = () => {
-    if (!newProduct.title || !newProduct.price) {
-      Swal.fire("Error", "Please fill in all fields", "error");
-      return;
+  // Add new product
+  const addProduct = async () => {
+    if (!newProduct.title || !newProduct.price || !newProduct.category) {
+      return Swal.fire(
+        "Error",
+        "Title, price and category are required",
+        "error"
+      );
     }
-    const newProductData = {
-      id: `gp${Date.now()}`,
-      ...newProduct,
-    };
-    setProducts((prevProducts) => [...prevProducts, newProductData]);
-    setNewProduct({
-      title: "",
-      price: "",
-      description: "",
-      image: "",
-      discountPercentage: "",
-      rating: "",
-      availableQuantity: "",
-      tags: [],
-    });
-    Swal.fire("Added!", "New product has been added.", "success");
+
+    try {
+      const tempId = `temp_${Date.now()}`;
+      const productToAdd = { ...newProduct, id: tempId };
+
+      // Optimistic update
+      setProducts((prev) => [...prev, productToAdd]);
+
+      const response = await fetch(
+        `http://localhost:5000/products/${encodeURIComponent(
+          newProduct.category
+        )}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProduct),
+        }
+      );
+
+      if (!response.ok) {
+        // Revert if API fails
+        setProducts(products);
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const createdProduct = await response.json();
+
+      // Replace temporary ID with server-generated ID
+      setProducts((prev) =>
+        prev.map((p) => (p.id === tempId ? createdProduct : p))
+      );
+
+      // Reset form
+      setNewProduct({
+        title: "",
+        description: "",
+        image: "",
+        price: "",
+        discountPercentage: "",
+        rating: "",
+        availableQuantity: "",
+        thumbnail: "",
+        images: [],
+        tags: [],
+        category: "",
+      });
+
+      Swal.fire("Added!", "New product created", "success");
+    } catch (error) {
+      console.error("Add failed:", error);
+      Swal.fire("Error", `Add failed: ${error.message}`, "error");
+    }
   };
 
-  if (loading) {
-    return <p className="text-gray-600">Loading products...</p>;
-  }
+  // Input handlers
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct((prev) => ({
+      ...prev,
+      [name]:
+        name === "tags" ? value.split(",").map((tag) => tag.trim()) : value,
+    }));
+  };
+
+  const handleNumberChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct((prev) => ({
+      ...prev,
+      [name]: isNaN(value) ? value : Number(value),
+    }));
+  };
+
+  if (loading)
+    return <div className="p-4 text-center">Loading products...</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-6">
-        Manage Products
-      </h2>
+      <h1 className="text-3xl font-bold mb-8">Product Management</h1>
 
-      {/* Add New Product Form */}
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-        <h3 className="text-xl text-gray-700 mb-4">Add New Product</h3>
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Product Title"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.title}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, title: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Product Price"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.price}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, price: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Product Description"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.description}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, description: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Product Image URL"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.image}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, image: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Discount Percentage"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.discountPercentage}
-            onChange={(e) =>
-              setNewProduct({
-                ...newProduct,
-                discountPercentage: e.target.value,
-              })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Rating"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.rating}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, rating: e.target.value })
-            }
-          />
-          <input
-            type="number"
-            placeholder="Available Quantity"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.availableQuantity}
-            onChange={(e) =>
-              setNewProduct({
-                ...newProduct,
-                availableQuantity: e.target.value,
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Tags (comma-separated)"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={newProduct.tags.join(", ")}
-            onChange={(e) =>
-              setNewProduct({
-                ...newProduct,
-                tags: e.target.value.split(",").map((tag) => tag.trim()),
-              })
-            }
-          />
-          <button
-            onClick={addProduct}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg"
-          >
-            Add Product
-          </button>
+      {/* Add/Edit Form */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4">
+          {isEditing ? "Edit Product" : "Add New Product"}
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Category*
+              </label>
+              <select
+                name="category"
+                value={newProduct.category}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-md"
+                required
+              >
+                <option value="">Select Category</option>
+                {Array.from(new Set(products.map((p) => p.category))).map(
+                  (cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Title*</label>
+              <input
+                type="text"
+                name="title"
+                value={newProduct.title}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-md"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Price*</label>
+              <input
+                type="number"
+                name="price"
+                value={newProduct.price}
+                onChange={handleNumberChange}
+                className="w-full p-2 border rounded-md"
+                step="0.01"
+                min="0"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Stock*</label>
+              <input
+                type="number"
+                name="availableQuantity"
+                value={newProduct.availableQuantity}
+                onChange={handleNumberChange}
+                className="w-full p-2 border rounded-md"
+                min="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={newProduct.description}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-md h-32"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Image URL
+              </label>
+              <input
+                type="url"
+                name="image"
+                value={newProduct.image}
+                onChange={handleInputChange}
+                className="w-full p-2 border rounded-md"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Tags</label>
+              <input
+                type="text"
+                name="tags"
+                value={newProduct.tags.join(", ")}
+                onChange={(e) =>
+                  setNewProduct({
+                    ...newProduct,
+                    tags: e.target.value.split(",").map((tag) => tag.trim()),
+                  })
+                }
+                className="w-full p-2 border rounded-md"
+                placeholder="tag1, tag2, tag3"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-4">
+          {isEditing ? (
+            <>
+              <button
+                onClick={updateProduct}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              >
+                Update Product
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditProductId(null);
+                  setNewProduct({
+                    title: "",
+                    description: "",
+                    image: "",
+                    price: "",
+                    discountPercentage: "",
+                    rating: "",
+                    availableQuantity: "",
+                    thumbnail: "",
+                    images: [],
+                    tags: [],
+                    category: "",
+                  });
+                }}
+                className="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={addProduct}
+              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+            >
+              Add Product
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Editing Product */}
-      {isEditing && (
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-          <h3 className="text-xl text-gray-700 mb-4">Edit Product</h3>
-          <div className="space-y-4">
-            <input
-              type="text"
-              placeholder="Product Title"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.title}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, title: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Product Price"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.price}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, price: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Product Description"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.description}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, description: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Product Image URL"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.image}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, image: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Discount Percentage"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.discountPercentage}
-              onChange={(e) =>
-                setNewProduct({
-                  ...newProduct,
-                  discountPercentage: e.target.value,
-                })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Rating"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.rating}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, rating: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Available Quantity"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.availableQuantity}
-              onChange={(e) =>
-                setNewProduct({
-                  ...newProduct,
-                  availableQuantity: e.target.value,
-                })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Tags (comma-separated)"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={newProduct.tags.join(", ")}
-              onChange={(e) =>
-                setNewProduct({
-                  ...newProduct,
-                  tags: e.target.value.split(",").map((tag) => tag.trim()),
-                })
-              }
-            />
-            <button
-              onClick={updateProduct}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg"
-            >
-              Update Product
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Displaying Products */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="bg-white shadow-md rounded-lg p-4">
+          <div
+            key={product.id}
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+          >
             <img
               src={product.image}
               alt={product.title}
-              className="w-full h-40 object-cover rounded-md mb-4"
+              className="w-full h-48 object-cover"
+              onError={(e) => {
+                e.target.src = "https://via.placeholder.com/300?text=No+Image";
+              }}
             />
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              {product.title}
-            </h3>
-            <p className="text-gray-600 text-sm mb-2">{product.description}</p>
-            <p className="text-gray-700 font-semibold">{product.price}$</p>
-            <div className="flex items-center space-x-2 mb-4">
-              <span className="text-yellow-400">{product.rating}⭐</span>
-              <span className="text-gray-500 text-sm">
-                ({product.availableQuantity} in stock)
-              </span>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => startEditProduct(product)}
-                className="text-blue-500 hover:underline"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => deleteProduct(product.id)}
-                className="text-red-500 hover:underline"
-              >
-                Delete
-              </button>
+            <div className="p-4">
+              <h3 className="font-semibold text-lg mb-2">{product.title}</h3>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-blue-600 font-bold">
+                  ${product.price.toFixed(2)}
+                </span>
+                <span className="text-sm bg-gray-100 px-2 py-1 rounded">
+                  {product.category}
+                </span>
+              </div>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                {product.description}
+              </p>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  <span className="text-yellow-500">★ {product.rating}</span>
+                  <span className="text-gray-500">•</span>
+                  <span className="text-gray-600">
+                    {product.availableQuantity} in stock
+                  </span>
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => startEditProduct(product)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteProduct(product.id, product.category)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         ))}

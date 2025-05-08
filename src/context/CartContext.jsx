@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
   // Fetch user data helper
   const fetchUserData = useCallback(async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/users/${userId}`);
+      const response = await axios.get(`${import.meta.env.VITE_URL}/${userId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -47,7 +47,7 @@ export const CartProvider = ({ children }) => {
   // Update user data helper
   const updateUserData = useCallback(async (userId, updates) => {
     try {
-      await axios.patch(`http://localhost:5000/users/${userId}`, updates);
+      await axios.patch(`${import.meta.env.VITE_URL}/users/${userId}`, updates);
       return true;
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -58,10 +58,8 @@ export const CartProvider = ({ children }) => {
   // Fetch all products
   const fetchAllProducts = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:5000/products");
-      const allProducts = Object.values(response.data.categories).flatMap(
-        (category) => (Array.isArray(category) ? category : [])
-      );
+      const response = await axios.get(`${import.meta.env.VITE_URL}/products`);
+      const allProducts = Object.values(response.data.categories).flat();
       setProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);

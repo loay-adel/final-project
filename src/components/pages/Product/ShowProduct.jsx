@@ -102,7 +102,7 @@ const ShowProduct = ({ product, handleAddToCart }) => {
           className={`w-full py-3 rounded-lg font-medium ${
             product.availableQuantity === 0
               ? "!bg-gray-400 cursor-not-allowed"
-              : "!bg-blue-600 hover:!bg-blue-700"
+              : "!bg-main hover:!bg-blue-700"
           }`}
           fullWidth
         >
