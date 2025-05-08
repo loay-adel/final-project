@@ -91,7 +91,7 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
                   <Button
                     onClick={() => handleAddToCart(product)}
                     fullWidth
-                    className="flex items-center justify-center bg-blue-600 hover:bg-blue-700"
+                    className="flex items-center justify-center bg-main hover:opacity-90"
                   >
                     <FaShoppingCart className="mr-2" />
                     Add to Cart

@@ -23,6 +23,7 @@ const Footer = () => {
         { name: "Cart", to: "/cart" },
         { name: "Wishlist", to: "/wishlist" },
         { name: "Shop", to: "/product" },
+        { name: "admin panel", to: "/admin-signin" },
       ],
     },
     {
@@ -93,13 +94,13 @@ const Footer = () => {
                     {link.to ? (
                       <Link
                         to={link.to}
-                        className="inline-block py-1 pr-2 transition-transform hover:scale-105 hover:scale-105"
+                        className="inline-block py-1 pr-2 transition-transform hover:scale-105"
                       >
                         {link.name}
                       </Link>
                     ) : (
                       <a
-                        href="#"
+                        disabled
                         className="inline-block py-1 pr-2 transition-transform hover:scale-105"
                       >
                         {link}
@@ -117,9 +118,7 @@ const Footer = () => {
             color="white"
             className="mb-4 text-center font-normal  md:mb-0"
           >
-            &copy; {currentYear}{" "}
-            <a href="https://material-tailwind.com/">Material Tailwind</a>. All
-            Rights Reserved.
+            &copy; {currentYear} Momentom Maker
           </Typography>
           <div className="flex gap-4 text-blue-gray-900 sm:justify-center">
             <Typography
@@ -161,4 +160,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;

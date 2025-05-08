@@ -17,6 +17,7 @@ import ForgetPassword from "./components/pages/ForgetPassword";
 
 import Signin from "./components/authentucation/Signin";
 import Signup from "./components/authentucation/Signup";
+import AdminAuthPage from "./components/pages/admin-view/AdminAuthPage";
 
 const UserLayout = () => {
   return (
@@ -32,7 +33,7 @@ const UserLayout = () => {
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
         <Route path="forget-password" element={<ForgetPassword />} />
-
+        <Route path="admin-signin" element={<AdminAuthPage />}></Route>
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="about" element={<About />} />
         <Route path="account" element={<Account />} />
