@@ -6,7 +6,7 @@ const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/orders")
+    fetch(`${import.meta.env.VITE_URL}/orders`)
       .then((res) => res.json())
       .then((data) => {
         setOrders(data);
@@ -29,13 +29,16 @@ const OrdersPage = () => {
 
     if (confirmed.isConfirmed) {
       try {
-        const res = await fetch(`http://localhost:5000/orders/${orderId}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_URL}/orders/${orderId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: newStatus }),
+          }
+        );
 
         if (!res.ok) throw new Error("Update failed");
 

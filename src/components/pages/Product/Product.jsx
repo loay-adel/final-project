@@ -7,18 +7,20 @@ import ShowProduct from "./ShowProduct";
 import ShowProducts from "./ShowProducts";
 const Product = () => {
   const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState(null); 
+  const [product, setProduct] = useState(null);
   const { category, name } = useParams();
   const { addToCart } = useContext(CartContext);
   useEffect(() => {
     axios
-      .get(`https://inquisitive-wise-story.glitch.me/db.json`)
+      .get(`${import.meta.env.VITE_URL}/product`)
       .then((res) => {
         const formattedCategory = category[0].toUpperCase() + category.slice(1);
         const categoryProducts = res.data.categories[formattedCategory];
         if (categoryProducts) {
           if (name) {
-            const singleProduct = categoryProducts.find((item) => item.title === name);
+            const singleProduct = categoryProducts.find(
+              (item) => item.title === name
+            );
             setProduct(singleProduct);
           } else {
             setProducts(categoryProducts);
@@ -47,7 +49,11 @@ const Product = () => {
       {name ? (
         <ShowProduct product={product} handleAddToCart={handleAddToCart} />
       ) : (
-        <ShowProducts products={products} handleAddToCart={handleAddToCart} category={category} />
+        <ShowProducts
+          products={products}
+          handleAddToCart={handleAddToCart}
+          category={category}
+        />
       )}
     </div>
   );

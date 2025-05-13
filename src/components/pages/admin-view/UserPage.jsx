@@ -14,7 +14,7 @@ const UsersPage = () => {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch("http://localhost:5000/users")
+    fetch(`${import.meta.env.VITE_URL}/users`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);
@@ -39,7 +39,7 @@ const UsersPage = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:5000/users/${id}`, {
+          const res = await fetch(`${import.meta.env.VITE_URL}/users/${id}`, {
             method: "DELETE",
           });
 
@@ -69,11 +69,14 @@ const UsersPage = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:5000/users/${user.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ role: "admin" }),
-          });
+          const res = await fetch(
+            `${import.meta.env.VITE_URL}/users/${user.id}`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ role: "admin" }),
+            }
+          );
 
           if (res.ok) {
             Swal.fire(

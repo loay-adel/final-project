@@ -24,7 +24,7 @@ const ProductsAdmin = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/products");
+        const response = await fetch(`${import.meta.env.VITE_URL}/products`);
         if (!response.ok) throw new Error("Failed to fetch products");
 
         const data = await response.json();
@@ -69,7 +69,7 @@ const ProductsAdmin = () => {
         setProducts((prev) => prev.filter((p) => p.id !== productId));
 
         const response = await fetch(
-          `http://localhost:5000/products/${encodeURIComponent(
+          `${import.meta.env.VITE_URL}/products/${encodeURIComponent(
             category
           )}/${productId}`,
           { method: "DELETE" }
@@ -125,7 +125,7 @@ const ProductsAdmin = () => {
       );
 
       const response = await fetch(
-        `http://localhost:5000/products/${encodeURIComponent(
+        `${import.meta.env.VITE_URL}/products/${encodeURIComponent(
           newProduct.category
         )}/${editProductId}`,
         {
@@ -181,7 +181,7 @@ const ProductsAdmin = () => {
       setProducts((prev) => [...prev, productToAdd]);
 
       const response = await fetch(
-        `http://localhost:5000/products/${encodeURIComponent(
+        `${import.meta.env.VITE_URL}/products/${encodeURIComponent(
           newProduct.category
         )}`,
         {

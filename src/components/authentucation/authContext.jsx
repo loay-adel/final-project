@@ -1,9 +1,15 @@
-import { createContext, useState, useEffect, useContext, useCallback } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_URL;
 const AuthContext = createContext();
 
- export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     isAuthenticated: false,
     user: null,
@@ -23,7 +29,9 @@ const AuthContext = createContext();
   const signup = async (userData) => {
     try {
       // Check if user already exists by email
-      const usersResponse = await fetch(`${BASE_URL}/users?email=${userData.email}`);
+      const usersResponse = await fetch(
+        `${BASE_URL}/users?email=${userData.email}`
+      );
       const existingUsers = await handleResponse(usersResponse);
 
       if (existingUsers.length > 0) {
@@ -65,7 +73,9 @@ const AuthContext = createContext();
   // Login function
   const login = async (credentials) => {
     try {
-      const response = await fetch(`${BASE_URL}/users?email=${credentials.email}`);
+      const response = await fetch(
+        `${BASE_URL}/users?email=${credentials.email}`
+      );
       const users = await handleResponse(response);
 
       if (users.length === 0) {
@@ -177,5 +187,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-

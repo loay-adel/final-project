@@ -90,37 +90,31 @@ const Home = () => {
       color: "white",
     });
   };
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_URL}/products`
         );
-        const categories = response.data?.categories;
 
-        if (!categories || typeof categories !== "object") {
-          throw new Error(
-            "Invalid API response structure - missing categories"
-          );
+        const products = response.data;
+
+        if (!Array.isArray(products)) {
+          throw new Error("Invalid API response - expected an array");
         }
 
-        const allProducts = Object.values(categories).flatMap((category) => {
-          if (!Array.isArray(category)) return [];
-
-          return category.map((product) => ({
-            ...product,
-            id: product.id,
-            price: product.price ?? 19.99,
-            discountPercentage: product.discountPercentage ?? 10,
-            thumbnail:
-              product.thumbnail || product.image || product.images?.[0] || "",
-            rating: Math.min(product.rating ?? 3, 5),
-          }));
-        });
+        const allProducts = products.map((product) => ({
+          ...product,
+          id: product._id, // تعديل مهم: استخدام _id بدلاً من id
+          price: product.price ?? 19.99,
+          discount: product.discount ?? 10,
+          thumbnail:
+            product.thumbnail || product.image || product.images?.[0] || "",
+          rating: Math.min(product.rating ?? 3, 5),
+        }));
 
         if (!allProducts.length) {
-          console.warn("No valid products found in categories");
+          console.warn("No valid products found");
           return;
         }
 
@@ -187,7 +181,7 @@ const Home = () => {
   };
 
   const featuredProducts = useMemo(() => {
-    return products.filter((product) => product.discountPercentage > 15);
+    return products.filter((product) => product.discount > 15);
   }, [products]);
 
   if (isLoading)
@@ -334,12 +328,12 @@ const Home = () => {
           >
             {featuredProducts.map((product) => (
               <div
-                key={product.id}
+                key={product._id}
                 className="bg-white p-4 rounded-lg text-center min-w-[16em] group hover:cursor-pointer"
               >
                 <div className="w-full bg-sec h-64 relative">
                   <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                    -{product.discountPercentage.toFixed()}%
+                    -{product.discount.toFixed()}%
                   </span>
                   <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                     <button
@@ -349,7 +343,7 @@ const Home = () => {
                     >
                       <FaHeart
                         className={`text-xl transition-transform hover:scale-110 ${
-                          isInWishlist(product.id)
+                          isInWishlist(product._id)
                             ? "fill-red-500"
                             : "hover:fill-red-500"
                         }`}
@@ -384,10 +378,9 @@ const Home = () => {
                     <p className="text-main font-bold">${product.price}</p>
                     <p className="text-gray-400 line-through">
                       $
-                      {(
-                        product.price /
-                        (1 - product.discountPercentage / 100)
-                      ).toFixed(2)}
+                      {(product.price / (1 - product.discount / 100)).toFixed(
+                        2
+                      )}
                     </p>
                   </div>
                   <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
@@ -491,12 +484,12 @@ const Home = () => {
       <div className="flex p-4 overflow-x-auto scroll-smooth scrollbar-hide space-x-4">
         {products.slice(0, 5).map((product) => (
           <div
-            key={product.id}
+            key={product._id}
             className="bg-white p-4 rounded-lg text-center min-w-[16em] group hover:cursor-pointer"
           >
             <div className="w-full bg-sec h-64 relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                -{product.discountPercentage.toFixed()}%
+                {/* -{product.discount.toFixed()}% */}
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                 <button
@@ -506,7 +499,7 @@ const Home = () => {
                 >
                   <FaHeart
                     className={`text-xl transition-transform hover:scale-110 ${
-                      isInWishlist(product.id)
+                      isInWishlist(product._id)
                         ? "fill-red-500"
                         : "hover:fill-red-500"
                     }`}
@@ -536,11 +529,7 @@ const Home = () => {
               <div className="flex gap-3">
                 <p className="text-main font-bold">${product.price}</p>
                 <p className="text-gray-400 line-through">
-                  $
-                  {(
-                    product.price /
-                    (1 - product.discountPercentage / 100)
-                  ).toFixed(2)}
+                  ${(product.price / (1 - product.discount / 100)).toFixed(2)}
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
@@ -632,12 +621,12 @@ const Home = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
         {products.slice(0, 8).map((product) => (
           <div
-            key={product.id}
+            key={product._id}
             className="bg-white p-4 rounded-lg text-center group hover:cursor-pointer hover:shadow-lg transition-shadow"
           >
             <div className="w-full bg-sec h-64 relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                -{product.discountPercentage.toFixed()}%
+                -{product.discount.toFixed()}%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                 <button
@@ -647,7 +636,7 @@ const Home = () => {
                 >
                   <FaHeart
                     className={`text-xl transition-transform hover:scale-110 ${
-                      isInWishlist(product.id)
+                      isInWishlist(product._id)
                         ? "fill-red-500"
                         : "hover:fill-red-500"
                     }`}
@@ -677,11 +666,7 @@ const Home = () => {
               <div className="flex gap-3">
                 <p className="text-main font-bold text-lg">${product.price}</p>
                 <p className="text-gray-400 line-through">
-                  $
-                  {(
-                    product.price /
-                    (1 - product.discountPercentage / 100)
-                  ).toFixed(2)}
+                  ${(product.price / (1 - product.discount / 100)).toFixed(2)}
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">

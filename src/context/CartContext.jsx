@@ -59,7 +59,7 @@ export const CartProvider = ({ children }) => {
   const fetchAllProducts = useCallback(async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_URL}/products`);
-      const allProducts = Object.values(response.data.categories).flat();
+      const allProducts = response.data;
       setProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
