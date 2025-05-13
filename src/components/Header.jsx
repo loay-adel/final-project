@@ -39,7 +39,7 @@ const Header = () => {
 
     setIsSearching(true);
     try {
-      const response = await fetch("http://localhost:5000/products");
+      const response = await fetch(`${import.meta.env.VITE_URL}/products`);
       const data = await response.json();
 
       const allProducts = Object.values(data.categories).flatMap((category) =>
@@ -219,7 +219,6 @@ const Header = () => {
                     />
                   </MenuHandler>
                 )}
-
               </span>
             </MenuHandler>
             {isAuthenticated && (
@@ -227,7 +226,9 @@ const Header = () => {
                 <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
                   <FiUser />
                   <Typography variant="small" className="font-medium">
-                    <Link to="/account">My Profile {isAuthenticated && user?.firstName}</Link>
+                    <Link to="/account">
+                      My Profile {isAuthenticated && user?.firstName}
+                    </Link>
                   </Typography>
                 </MenuItem>
                 <hr className="my-2 border-gray-200" />

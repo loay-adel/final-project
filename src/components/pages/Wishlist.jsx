@@ -12,7 +12,7 @@ const Wishlist = () => {
   const [wishlistProducts, setWishlistProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useContext(CartContext);
-
+  const APIURl = import.meta.env.VITE_URL;
   // Get current user ID from localStorage
   const getCurrentUserId = () => {
     return localStorage.getItem("userId");
@@ -31,7 +31,7 @@ const Wishlist = () => {
 
     if (userId && currentUser) {
       try {
-        await fetch(`http://localhost:5000/users/${userId}`, {
+        await fetch(`${APIURl}/users/${userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const Wishlist = () => {
       if (!userId) return;
 
       try {
-        const response = await fetch(`http://localhost:5000/users/${userId}`);
+        const response = await fetch(`${APIURl}/users/${userId}`);
         const userData = await response.json();
         setCurrentUser(userData);
       } catch (error) {
@@ -64,9 +64,25 @@ const Wishlist = () => {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/products");
+        const response = await fetch(`${APIURl}/products`);
         const data = await response.json();
-        const allProducts = Object.values(data.categories).flat();
+
+        if (!Array.isArray(data)) {
+          throw new Error(
+            "Invalid API response - expected an array of products"
+          );
+        }
+
+        const allProducts = data.map((product) => ({
+          ...product,
+          id: product._id,
+          price: product.price ?? 19.99,
+          discountPercentage: product.discount ?? 10,
+          thumbnail:
+            product.thumbnail || product.image || product.images?.[0] || "",
+          rating: Math.min(product.rating ?? 3, 5),
+        }));
+
         setProducts(allProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -98,9 +114,7 @@ const Wishlist = () => {
     // Refresh user data if logged in
     if (currentUser) {
       try {
-        const response = await fetch(
-          `http://localhost:5000/users/${currentUser.id}`
-        );
+        const response = await fetch(`${APIURl}/users/${currentUser.id}`);
         const userData = await response.json();
         setCurrentUser(userData);
       } catch (error) {
@@ -184,7 +198,7 @@ const Wishlist = () => {
               <div className="w-1 h-8 bg-red-500 mr-3"></div>
               <h2 className="text-xl font-semibold">Just For You</h2>
             </div>
-            <Button variant="outline" className="text-sm px-4 bg-main">
+            <Button variant="outlined" className="text-sm px-4 bg-main">
               See All
             </Button>
           </div>
