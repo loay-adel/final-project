@@ -255,9 +255,9 @@ const Cart = () => {
                     </Link>
                     <button
                       onClick={handleClearCart}
-
-                      className={`px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition ${cartCount === 0 ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
+                      className={`px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition ${
+                        cartCount === 0 ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       Clear Cart
                     </button>
@@ -277,7 +277,6 @@ const Cart = () => {
                           />
                           <button
                             type="button"
-
                             className="rounded-lg bg-red-600 hover:bg-red-700 px-5 py-2.5 text-sm font-medium text-white transition"
                           >
                             Apply

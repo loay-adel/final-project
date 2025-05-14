@@ -105,7 +105,7 @@ const Home = () => {
 
         const allProducts = products.map((product) => ({
           ...product,
-          id: product._id, // تعديل مهم: استخدام _id بدلاً من id
+          id: product._id,
           price: product.price ?? 19.99,
           discount: product.discount ?? 10,
           thumbnail:
@@ -489,7 +489,7 @@ const Home = () => {
           >
             <div className="w-full bg-sec h-64 relative">
               <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
-                {/* -{product.discount.toFixed()}% */}
+                -{product.discount.toFixed()}%
               </span>
               <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
                 <button

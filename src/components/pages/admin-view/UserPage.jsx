@@ -70,7 +70,7 @@ const UsersPage = () => {
       if (result.isConfirmed) {
         try {
           const res = await fetch(
-            `${import.meta.env.VITE_URL}/users/${user.id}`,
+            `${import.meta.env.VITE_URL}/users/${user._id}`,
             {
               method: "PATCH",
               headers: { "Content-Type": "application/json" },
@@ -145,18 +145,20 @@ const UsersPage = () => {
       {/* User List */}
       <ul className="space-y-4">
         {filteredUsers.map((user) => (
-          <li key={user.id} className="bg-white p-6 rounded-lg shadow">
+          <li key={user._id} className="bg-white p-6 rounded-lg shadow">
             <p>
               <strong>Name:</strong> {user.firstName} {user.lastName}
             </p>
             <p>
-              <strong>Email:</strong> {user.email}
+              <strong>Email:</strong>
+              <span className="break-all">{user.email}</span>
             </p>
             <p>
               <strong>Role:</strong> {user.role}
             </p>
             <p>
-              <strong>Phone:</strong> {user.phone || "N/A"}
+              <strong>Phone:</strong>
+              <span className="break-all">{user.phone || "N/A"}</span>
             </p>
             <p>
               <strong>Wishlist:</strong> {user.wishlist.join(", ") || "None"}
@@ -165,7 +167,7 @@ const UsersPage = () => {
             <div className="mt-4 flex gap-2 flex-wrap">
               <button
                 className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                onClick={() => handleDelete(user.id)}
+                onClick={() => handleDelete(user._id)}
               >
                 Delete
               </button>
