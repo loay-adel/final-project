@@ -43,8 +43,14 @@ const Header = () => {
 
 
 useEffect(()=>{
+
+
 const token = localStorage.getItem("token")
-  const decoded = jwtDecode(token.toString());
+console.log(token , typeof (token));
+
+if(token)
+{
+   const decoded = jwtDecode(token.toString());
        setIsAuthenticatedState(true);
         setUser({
           firstName: decoded.firstName || "User",
@@ -56,6 +62,8 @@ const token = localStorage.getItem("token")
       _id:decoded._id,
 
         })
+}
+ 
                 
 } , []);
 console.log(user);
