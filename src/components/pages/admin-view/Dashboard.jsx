@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   FiHome,
   FiPackage,
@@ -13,10 +13,12 @@ import ProductsAdmin from "./ProductsAdmin";
 import OrdersPage from "./OrderPage";
 import UsersPage from "./UserPage";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "./../../../context/CartContext";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { products } = useContext(CartContext);
   const navigate = useNavigate();
   const handleLogout = () => {
     navigate("/admin-signin");
@@ -38,7 +40,7 @@ function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="font-medium text-gray-700">Total Products</h3>
-                <p className="text-3xl font-bold mt-2">124</p>
+                <p className="text-3xl font-bold mt-2">{products.length}</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="font-medium text-gray-700">New Orders</h3>
