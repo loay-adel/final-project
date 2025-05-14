@@ -1,8 +1,8 @@
+// src/components/Signup.jsx
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import { useAuth } from "./authContext";
+import axios from "axios";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +16,41 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signup } = useAuth();
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    
+    if (formData.phone && !/^\d{10,15}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number is invalid";
+    }
+    
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,99 +60,53 @@ const Signup = () => {
     }
   };
 
-  const validate = () => {
-    const newErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{10,15}$/;
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    } else if (formData.firstName.length < 2) {
-      newErrors.firstName = "First name must be at least 2 characters";
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (!formData.email.trim() && !formData.phone.trim()) {
-      newErrors.email = "Email or phone number is required";
-      newErrors.phone = "Email or phone number is required";
-    } else {
-      if (formData.email.trim() && !emailRegex.test(formData.email)) {
-        newErrors.email = "Invalid email format";
-      }
-      if (formData.phone.trim() && !phoneRegex.test(formData.phone)) {
-        newErrors.phone = "Invalid phone number (10–15 digits)";
-      }
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter";
-    } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one number";
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    return newErrors;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    
+    if (!validateForm()) {
       return;
     }
+    
     setLoading(true);
-
+    
     try {
-      await signup({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
+      const response = await axios({
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: "post",
+        url: "https://gioco-rx7d.vercel.app/api/users/register",
+        data: formData,
       });
-
-      Swal.fire({
-        title: "Account Created!",
-        text: "You have been successfully registered!",
-        icon: "success",
-        confirmButtonText: "Continue",
-      }).then(() => {
+      
+      if (response.data.status === 201) {
+        // Store user ID in localStorage if available in response
+        console.log(response);
+        
+        if (response.data.userId) {
+          localStorage.setItem('userId', response.data.userId);
+        }
         navigate("/signin");
-      });
+      }
     } catch (error) {
-      Swal.fire({
-        title: "Signup Failed",
-        text: error.message || "Could not create account",
-        icon: "error",
-      });
-      setErrors({
-        general: error.message || "Signup failed. Please try again.",
-      });
+      if (error.response) {
+        // Handle server validation errors
+        if (error.response.data.errors) {
+          setErrors(error.response.data.errors);
+        } else if (error.response.data.message) {
+          setErrors({ general: error.response.data.message });
+        }
+      } else {
+        setErrors({ general: "An error occurred. Please try again." });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col-reverse xl:flex-row items-center justify-center gap-8 pt-[2em] pb-[4.5em]">
-      <div className="w-full xl:w-1/2">
-        <img
-          src="/dl.beatsnoop 1.webp"
-          alt="Signup illustration"
-          className="w-full h-auto"
-        />
-      </div>
+    <div className="flex font-mainFont flex-col-reverse xl:flex-row items-center justify-start gap-8 pt-[2em] pb-[4.5em]">
+      <img src="/dl.beatsnoop 1.webp" alt="" className="w-full xl:w-1/2" />
       <div className="w-full max-w-sm sm:max-w-md mx-auto px-4">
         <Card color="transparent" shadow={false}>
           <div className="space-y-[1.5em]">
@@ -136,11 +124,13 @@ const Signup = () => {
               Enter your details below
             </Typography>
           </div>
+          
           {errors.general && (
             <p className="text-red-500 text-center mt-4">{errors.general}</p>
           )}
-          <form onSubmit={handleSubmit} className="mt-8 mb-2" noValidate>
-            <div className="space-y-4">
+          
+          <form onSubmit={handleSubmit} className="mt-8 mb-2 space-y-[1.5em]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Input
                   name="firstName"
@@ -149,6 +139,7 @@ const Signup = () => {
                   value={formData.firstName}
                   onChange={handleChange}
                   error={!!errors.firstName}
+                  disabled={loading}
                 />
                 {errors.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
@@ -162,70 +153,97 @@ const Signup = () => {
                   value={formData.lastName}
                   onChange={handleChange}
                   error={!!errors.lastName}
+                  disabled={loading}
                 />
                 {errors.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
                 )}
               </div>
-              <div>
-                <Input
-                  name="email"
-                  variant="standard"
-                  label="Email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  error={!!errors.email}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  name="password"
-                  variant="standard"
-                  label="Password *"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  error={!!errors.password}
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-                )}
-              </div>
-              <div>
-                <Input
-                  name="confirmPassword"
-                  variant="standard"
-                  label="Confirm Password *"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  error={!!errors.confirmPassword}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-                )}
-              </div>
             </div>
-            <div className="space-y-4 mt-6">
-              <Button
-                type="submit"
-                className="bg-main p-4 text-xl capitalize w-full"
+            
+            <div>
+              <Input
+                name="email"
+                variant="standard"
+                label="Email *"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
                 disabled={loading}
-              >
-                {loading ? "Creating Account..." : "Create Account"}
-              </Button>
-              <Typography color="gray" className="text-center font-normal">
-                Already have an account?{" "}
-                <Link to="/signin" className="font-medium text-blue-600">
-                  Sign In
-                </Link>
-              </Typography>
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
+            
+            <div>
+              <Input
+                name="phone"
+                variant="standard"
+                label="Phone Number"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                error={!!errors.phone}
+                disabled={loading}
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+              )}
+            </div>
+            
+            <div>
+              <Input
+                name="password"
+                variant="standard"
+                label="Password *"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={!!errors.password}
+                disabled={loading}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
+            
+            <div>
+              <Input
+                name="confirmPassword"
+                variant="standard"
+                label="Confirm Password *"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                error={!!errors.confirmPassword}
+                disabled={loading}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-main rounded-[0.5em] p-[0.8em] px-10"
+              size="lg"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
           </form>
+
+          <Typography color="gray" className="mt-4 text-center font-normal">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+            >
+              Sign In
+            </Link>
+          </Typography>
         </Card>
       </div>
     </div>

@@ -13,7 +13,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [products, setProducts] = useState([]);
-
+    const [user ,setUser] = useState({})
   // Helper function to get user ID
   const getUserId = useCallback(() => {
     return localStorage.getItem("userId");
@@ -271,6 +271,8 @@ export const CartProvider = ({ children }) => {
       setProducts,
       getTotal,
       fetchAllProducts,
+      user,
+      setUser,
     }),
     [
       cart,
@@ -289,6 +291,8 @@ export const CartProvider = ({ children }) => {
       isInWishlist,
       getTotal,
       fetchAllProducts,
+      user,
+      setUser,
     ]
   );
 
