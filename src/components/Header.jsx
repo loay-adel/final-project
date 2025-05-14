@@ -42,30 +42,36 @@ const Header = () => {
 
 
 
-useEffect(()=>{
-
-
-const token = localStorage.getItem("token")
-console.log(token , typeof (token));
-
-if(token)
-{
-   const decoded = jwtDecode(token.toString());
-       setIsAuthenticatedState(true);
-        setUser({
-          firstName: decoded.firstName || "User",
-          email: decoded.email,
-        role:decoded.role,
-      addresses:decoded.addresses,
-      wishlist:decoded.wishlist,
-      cart:decoded.cart ,
-      _id:decoded._id,
-
-        })
-}
+useEffect(() => {
+  const token = localStorage.getItem("token");
  
-                
-} , []);
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token); 
+      setIsAuthenticatedState(true);
+      setUser({
+        firstName: decoded.firstName || "User",
+        email: decoded.email,
+        role: decoded.role,
+        addresses: decoded.addresses || [],
+        wishlist: decoded.wishlist || [],
+        cart: decoded.cart || [],
+        _id: decoded._id,
+      });
+
+    } catch (error) {
+    
+      setIsAuthenticatedState(false);
+      setUser(null);
+      localStorage.removeItem("token"); 
+    }
+  } else {
+    
+    setIsAuthenticatedState(false);
+    setUser(null); 
+  }
+}, []);
 console.log(user);
 
   // Check authentication status on mount
