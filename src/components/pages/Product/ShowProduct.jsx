@@ -28,13 +28,14 @@ const ShowProduct = ({ product, handleAddToCart }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 bg-white rounded-xl overflow-hidden max-w-5xl mx-auto my-8 shadow-lg">
       <div className="relative bg-gray-50 flex items-center justify-center p-8">
+                  
         {product.availableQuantity <= 5 && (
           <span className="absolute top-4 right-4 bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
             Only {product.availableQuantity} left!
           </span>
         )}
         <img
-          src={product.image}
+          src={product.thumbnail}
           alt={product.title}
           className="w-full max-w-md h-auto object-contain aspect-square"
         />

@@ -5,30 +5,43 @@ import Swal from "sweetalert2";
 import { CartContext } from "../../../context/CartContext";
 import ShowProduct from "./ShowProduct";
 import ShowProducts from "./ShowProducts";
+
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
-  const { category, name } = useParams();
+  const [allProduct, setAllProduct] = useState([]);
+
+  const { category, id } = useParams();
   const { addToCart } = useContext(CartContext);
+
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_URL}/product`)
+      .get(`https://gioco-rx7d.vercel.app/api/products`)
       .then((res) => {
-        const formattedCategory = category[0].toUpperCase() + category.slice(1);
-        const categoryProducts = res.data.categories[formattedCategory];
-        if (categoryProducts) {
-          if (name) {
-            const singleProduct = categoryProducts.find(
-              (item) => item.title === name
+        if (res.data != null) {
+          let filteredProducts = res.data;
+
+          if (category) {
+            filteredProducts = filteredProducts.filter(
+              (product) => product.category === category
             );
-            setProduct(singleProduct);
-          } else {
-            setProducts(categoryProducts);
           }
+
+          if (id) {
+            const productById = filteredProducts.find(
+              (product) => product._id === id
+            );
+            if (productById) {
+              setProduct(productById);
+            }
+          }
+
+          setAllProduct(res.data);
+          setProducts(filteredProducts);
         }
       })
       .catch((e) => console.log(e));
-  }, [category, name]);
+  }, [category, id]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -44,13 +57,20 @@ const Product = () => {
       color: "white",
     });
   };
+
   return (
     <div>
-      {name ? (
+      {id ? (
         <ShowProduct product={product} handleAddToCart={handleAddToCart} />
-      ) : (
+      ) : category ? (
         <ShowProducts
           products={products}
+          handleAddToCart={handleAddToCart}
+          category={category}
+        />
+      ) : (
+        <ShowProducts
+          products={allProduct}
           handleAddToCart={handleAddToCart}
           category={category}
         />

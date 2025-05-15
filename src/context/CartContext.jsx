@@ -55,10 +55,9 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Fetch all products
   const fetchAllProducts = useCallback(async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_URL}/products`);
+      const response = await axios.get(`https://gioco-rx7d.vercel.app/api/products`);
       const allProducts = response.data;
       setProducts(allProducts);
     } catch (error) {
@@ -226,7 +225,6 @@ export const CartProvider = ({ children }) => {
     [cart]
   );
 
-  // Initialize user data
   const initializeUserData = useCallback(async () => {
     const userId = getUserId();
 
