@@ -43,7 +43,7 @@ const Home = () => {
   } = useContext(CartContext);
   const isDisabled = true;
   const [showArrowUP, setShowArrowUP] = useState(false);
-  const [rated, setRated] = useState(4);
+  const [rated, setRated] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -282,7 +282,7 @@ const Home = () => {
       </div>
 
       {/* Flash Sales Section */}
-      <div className="md:mt-40">
+      <div className="md:mt-40" id="sales-offers">
         <div className="flex flex-row">
           <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
           <h1 className="text-4xl text-main ml-2.5 font-mainFont">Today's</h1>
@@ -384,12 +384,11 @@ const Home = () => {
                     </p>
                   </div>
                   <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                    ({rated})
+                    {product.rating.toFixed(1)}
                     <Rating
                       unratedColor="gray"
-                      value={4}
+                      value={2}
                       ratedColor="amber"
-                      onChange={(value) => setRated(value)}
                       className="mr-2"
                     />
                   </div>
@@ -533,7 +532,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                ({rated})
+                {product.rating.toFixed(1)}
                 <Rating
                   unratedColor="gray"
                   value={4}
@@ -554,15 +553,17 @@ const Home = () => {
             {/* Banner Content */}
             <div className="md:w-2/3 mb-6 md:mb-0">
               <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                Limited Time Offer!
+                Flash sale now !
               </h2>
               <p className="mt-3 text-lg text-purple-100">
-                Get 50% off on all premium plans. Upgrade now and unlock
-                exclusive features.
+                Limited Time Offer! Flash sale now on most of our products. grap
+                your oportunite .
               </p>
-              <button className="mt-6 px-6 py-3 bg-white text-purple-600 font-medium rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg">
-                Claim Your Discount
-              </button>
+              <a href="#sales-offers">
+                <button className="mt-6 px-6 py-3 bg-white text-purple-600 font-medium rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg">
+                  click to enjoy the offers
+                </button>
+              </a>
             </div>
 
             {/* Countdown Timer */}
@@ -670,7 +671,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                ({rated})
+                {product.rating.toFixed(1)}
                 <Rating
                   unratedColor="gray"
                   value={4}
