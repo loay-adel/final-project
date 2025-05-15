@@ -21,7 +21,11 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          {category.charAt(0).toUpperCase() + category.slice(1)}
+          {category?
+          category.charAt(0).toUpperCase() + category.slice(1)
+            :
+          "All Products"
+        }
         </h2>
         <p className="text-gray-600 text-lg">Discover our premium collection</p>
         <div className="w-20 h-1 bg-blue-500 mx-auto mt-4 rounded-full"></div>
@@ -43,7 +47,12 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
             Back to Categories
           </Button>
         </div>
-      ) : (
+      ) : 
+      
+      
+      
+      
+      (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.length == 0 ? (
             <h1>loading</h1>
@@ -55,15 +64,21 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
               >
                 <CardHeader floated={false} className="h-60 relative">
                   <img
-                    src={product.image}
+                    src={product.thumbnail}
                     alt={product.title}
                     className="h-full w-full object-cover"
                   />
-                  {product.availableQuantity <= 5 && (
+                  {/* to know how many product is still  */}
+
+                  {product.availableQuantity <= 5 ? (
                     <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                       Only {product.availableQuantity} left
                     </span>
-                  )}
+                  ):
+                  <span className="absolute top-3 right-3 bg-blue-gray-300 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      {product.availableQuantity} left
+                    </span>
+                }
                 </CardHeader>
                 <CardBody className="pt-3 pb-1">
                   <div className="flex justify-between items-start mb-2">
@@ -74,7 +89,7 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
                       {product.title}
                     </Typography>
                     <Typography color="blue" className="font-bold text-lg">
-                      {product.price || 95} EGP
+                      {product.price} EGP
                     </Typography>
                   </div>
                   <Typography className="text-sm text-gray-600 line-clamp-2 mb-3">
@@ -97,7 +112,7 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
                     Add to Cart
                   </Button>
                   <Link
-                    to={`/show-products/${category}/${product.title}`}
+                    to={`/show-products/${product.category}/${product._id}`}
                     className="w-full"
                   >
                     <Button
@@ -120,3 +135,26 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
 };
 
 export default ShowProducts;
+
+
+/**
+ 
+
+"_id": "682077e44ff341fbb5629b9f",
+"title": "Dog Food",
+"description": "Specially formulated dog food designed to provide essential nutrients for your canine companion.",
+"price": 24.99,
+"discount": 10,
+"rating": 4.3,
+"category": "Pet Food",
+"availableQuantity": 30,
+"thumbnail": "https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/thumbnail.png",
+"images": [
+"https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/1.png",
+"https://cdn.dummyjson.com/products/images/groceries/Dog%20Food/2.png"
+],
+"tags": [
+"pet",
+"dog",
+"food"
+ */

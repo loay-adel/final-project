@@ -1,9 +1,9 @@
+// src/components/Signin.jsx
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import Swal from "sweetalert2";
-import { useAuth } from "./authContext";
-
+import { useContext, useState,  } from "react";
+import { CartContext } from "../../context/CartContext";
+import axios from "axios";
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -11,67 +11,72 @@ const Signin = () => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
+
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+    const { setUser} = useContext(CartContext)
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
+    setCredentials(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+      setErrors(prev => ({ ...prev, [name]: "" }));
     }
   };
 
-  const validate = () => {
+  const validateForm = () => {
     const newErrors = {};
+    
     if (!credentials.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = "Email is invalid";
     }
+    
     if (!credentials.password) {
       newErrors.password = "Password is required";
-    } else if (credentials.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
     }
-    return newErrors;
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const validationErrors = validate();
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setLoading(false);
+    
+    if (!validateForm()) {
       return;
     }
-
+    
+    setLoading(true);
+    
     try {
-      await login({
-        email: credentials.email,
-        password: credentials.password,
+      const response = await axios({
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: "post",
+        url: "https://gioco-rx7d.vercel.app/api/users/login",
+        data: credentials,
       });
-
-      Swal.fire({
-        title: "Login Successful!",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-      navigate("/");
+      
+      if (response.data.status === 200) {
+        // Store user ID and token in localStorage
+        console.log(response.data.data.data);
+        localStorage.setItem('token', response.data.data.data);
+        navigate("/");
+        setUser(response.data.data.data)
+      }
     } catch (error) {
-      Swal.fire({
-        title: "Login Failed",
-        text: error.message || "Invalid email or password",
-        icon: "error",
-      });
-      setErrors({
-        general: error.message || "Login failed. Please try again.",
-      });
+      if (error.response) {
+        if (error.response.data.message) {
+          setErrors({ general: error.response.data.message });
+        }
+      } else {
+        setErrors({ general: "An error occurred. Please try again." });
+      }
     } finally {
       setLoading(false);
     }
@@ -86,22 +91,21 @@ const Signin = () => {
       e.preventDefault();
       setForgetLoading(true);
 
+      // Add your forget password logic here
+      // Validate email first
+      if (!email.trim()) {
+        setForgetErrors({ email: "Email is required" });
+        setForgetLoading(false);
+        return;
+      }
+
       try {
-        if (!email.trim()) {
-          setForgetErrors({ email: "Email is required" });
-          return;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        Swal.fire({
-          title: "Reset Email Sent",
-          text: "Check your email for password reset instructions",
-          icon: "success",
-        });
+        // Call your forget password API
+        // await axios.post('/api/forget-password', { email });
+        alert("Password reset link sent to your email!");
         onClose();
       } catch (error) {
-        setForgetErrors({ email: error.message });
+        setForgetErrors({ general: "Failed to send reset link. Please try again." });
       } finally {
         setForgetLoading(false);
       }
@@ -162,27 +166,36 @@ const Signin = () => {
       <div className="w-full max-w-sm sm:max-w-md mx-auto px-4">
         <Card color="transparent" shadow={false}>
           <div className="space-y-[1.5em]">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl text-black">
+            <Typography
+              variant="h2"
+              color="blue-gray"
+              className="text-2xl sm:text-3xl md:text-4xl"
+            >
               Log in to Exclusive
-            </h2>
-            <p className="mt-1 font-normal text-sm sm:text-base">
+            </Typography>
+            <Typography
+              color="black"
+              className="mt-1 font-normal text-sm sm:text-base"
+            >
               Enter your details below
-            </p>
+            </Typography>
           </div>
 
           {errors.general && (
             <p className="text-red-500 text-center mt-4">{errors.general}</p>
           )}
+        
 
           <form onSubmit={handleSubmit} className="mt-8 mb-2 space-y-[1.5em]">
             <div>
               <Input
                 name="email"
                 variant="standard"
-                label="Email"
+                label="Email *"
                 value={credentials.email}
                 onChange={handleChange}
                 error={!!errors.email}
+                disabled={loading}
               />
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email}</p>
@@ -192,11 +205,12 @@ const Signin = () => {
               <Input
                 name="password"
                 variant="standard"
-                label="Password"
+                label="Password *"
                 type="password"
                 value={credentials.password}
                 onChange={handleChange}
                 error={!!errors.password}
+                disabled={loading}
               />
               {errors.password && (
                 <p className="text-red-500 text-sm">{errors.password}</p>

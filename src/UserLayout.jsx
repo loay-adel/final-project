@@ -29,7 +29,8 @@ const UserLayout = () => {
         <Route path="checkout" element={<Checkout />} />
         <Route path="contact" element={<Contact />} />
         <Route path="*" element={<Error />} />
-        <Route path="show-products/:category/:name?" element={<Product />} />
+        <Route path="show-products" element={<Product />} />
+        <Route path="show-products/:category/:id?" element={<Product />} />
         <Route path="signin" element={<Signin />} />
         <Route path="signup" element={<Signup />} />
         <Route path="forget-password" element={<ForgetPassword />} />

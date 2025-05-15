@@ -1,3 +1,7 @@
+
+
+
+// src/components/Header.jsx
 import {
   Navbar,
   Collapse,
@@ -9,26 +13,76 @@ import {
   MenuList,
   MenuItem,
   Avatar,
-  Button,
 } from "@material-tailwind/react";
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoCartOutline } from "react-icons/io5";
 import { FaRegHeart, FaSearch } from "react-icons/fa";
-
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { CartContext } from "../context/CartContext";
-import { useAuth } from "./authentucation/authContext";
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
-  const { cartCount, wishlistCount } = useContext(CartContext);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { cartCount, wishlistCount , user , setUser } = useContext(CartContext);
+  const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+
+
+
+      
+        
+      
+
+
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+ 
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token); 
+      setIsAuthenticatedState(true);
+      setUser({
+        firstName: decoded.firstName || "User",
+        email: decoded.email,
+        role: decoded.role,
+        addresses: decoded.addresses || [],
+        wishlist: decoded.wishlist || [],
+        cart: decoded.cart || [],
+        _id: decoded._id,
+      });
+
+    } catch (error) {
+    
+      setIsAuthenticatedState(false);
+      setUser(null);
+      localStorage.removeItem("token"); 
+    }
+  } else {
+    
+    setIsAuthenticatedState(false);
+    setUser(null); 
+  }
+}, []);
+console.log(user);
+
+  // Check authentication status on mount
+  useEffect(() => {
+    if(localStorage.getItem("token")){
+     setIsAuthenticatedState(true)
+    }else{
+      setIsAuthenticatedState(false)
+    }
+
+  }, [user,isAuthenticatedState]);
 
   const handleSearch = async (query) => {
     if (query.trim().length === 0) {
@@ -80,8 +134,12 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    localStorage.removeItem("token")
+    setUser({})
+      navigate("/");
+    // signOut(navigate);
+    setIsAuthenticatedState(false);
+    // setUser(null);
   };
 
   const navList = (
@@ -95,7 +153,7 @@ const Header = () => {
       <Link to="/about" className="flex active:border-b-2 items-center">
         About
       </Link>
-      {!isAuthenticated && (
+      {!isAuthenticatedState && (
         <Menu>
           <MenuHandler>
             <span className="cursor-pointer">Sign In</span>
@@ -119,7 +177,6 @@ const Header = () => {
         </Typography>
         <div className="hidden lg:block">{navList}</div>
         <div className="gap-x-2 hidden items-center lg:flex">
-          {/* Search Bar with Dropdown */}
           <div className="flex rounded-2xl w-full gap-2 md:w-max relative">
             <div className="relative w-full">
               <div className="relative flex items-center">
@@ -142,8 +199,6 @@ const Header = () => {
                 />
                 <FaSearch className="absolute left-3 text-gray-500" />
               </div>
-
-              {/* Search Dropdown */}
               {showSearchDropdown && (
                 <div className="absolute z-50 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 max-h-80 overflow-auto">
                   {isSearching ? (
@@ -160,6 +215,7 @@ const Header = () => {
                             src={product.image || product.thumbnail}
                             alt={product.title}
                             className="w-10 h-10 object-cover rounded mr-3"
+                            onError={(e) => (e.target.src = "/fallback-image.jpg")} // Fallback image
                           />
                           <div>
                             <Typography variant="small" className="font-medium">
@@ -182,9 +238,7 @@ const Header = () => {
               )}
             </div>
           </div>
-
           <div className="flex items-center gap-4 ml-4">
-            {/* Wishlist Icon */}
             <div className="relative">
               <Link to="/wishlist">
                 <FaRegHeart className="text-2xl hover:scale-105 hover:cursor-pointer" />
@@ -195,7 +249,6 @@ const Header = () => {
                 </span>
               )}
             </div>
-            {/* Cart Icon */}
             <div className="relative">
               <Link to="/cart">
                 <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
@@ -206,44 +259,39 @@ const Header = () => {
                 </span>
               )}
             </div>
+            {isAuthenticatedState ? (
+              <Menu>
+                <MenuHandler>
+                  <Avatar
+                    src="/user.png"
+                    alt="User avatar"
+                    className="cursor-pointer w-8 h-8 hover:scale-105"
+                    onError={(e) => (e.target.src = "/fallback-image.jpg")} // Fallback image
+                  />
+                </MenuHandler>
+                <MenuList className="bg-white rounded-lg shadow-lg">
+                  <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
+                    <FiUser />
+                    <Typography variant="small" className="font-medium">
+                      <Link to="/account">
+                        My Profile {user.firstName}
+                      </Link>
+                    </Typography>
+                  </MenuItem>
+                  <hr className="my-2 border-gray-200" />
+                  <MenuItem
+                    className="flex items-center gap-2 hover:bg-gray-100"
+                    onClick={handleLogout}
+                  >
+                    <FiLogOut />
+                    <Typography variant="small" className="font-medium">
+                      Sign Out
+                    </Typography>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : null}
           </div>
-          <Menu>
-            <MenuHandler>
-              <span className="cursor-pointer">
-                {isAuthenticated && user && (
-                  <MenuHandler>
-                    <img
-                      src="/user.png"
-                      className="cursor-pointer text-3xl hover:scale-105 hover:cursor-pointer"
-                      alt=""
-                    />
-                  </MenuHandler>
-                )}
-              </span>
-            </MenuHandler>
-            {isAuthenticated && (
-              <MenuList className="bg-white rounded-lg shadow-lg">
-                <MenuItem className="flex items-center gap-2 hover:bg-gray-100">
-                  <FiUser />
-                  <Typography variant="small" className="font-medium">
-                    <Link to="/account">
-                      My Profile {isAuthenticated && user?.firstName}
-                    </Link>
-                  </Typography>
-                </MenuItem>
-                <hr className="my-2 border-gray-200" />
-                <MenuItem
-                  className="flex items-center gap-2 hover:bg-gray-100"
-                  onClick={handleLogout}
-                >
-                  <FiLogOut />
-                  <Typography variant="small" className="font-medium">
-                    Sign Out
-                  </Typography>
-                </MenuItem>
-              </MenuList>
-            )}
-          </Menu>
         </div>
         <IconButton
           variant="text"
@@ -287,7 +335,6 @@ const Header = () => {
       <Collapse open={openNav}>
         <div className="container mx-auto text-black">
           {navList}
-          {/* Mobile Search */}
           <div className="relative mt-4">
             <div className="relative flex items-center">
               <Input
@@ -309,8 +356,6 @@ const Header = () => {
               />
               <FaSearch className="absolute left-3 text-gray-500" />
             </div>
-
-            {/* Mobile Search Dropdown */}
             {showSearchDropdown && (
               <div className="absolute z-50 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 max-h-80 overflow-auto">
                 {isSearching ? (
@@ -327,12 +372,16 @@ const Header = () => {
                           src={product.image || product.thumbnail}
                           alt={product.title}
                           className="w-10 h-10 object-cover rounded mr-3"
+                          onError={(e) => (e.target.src = "/fallback-image.jpg")} // Fallback image
                         />
                         <div>
                           <Typography variant="small" className="font-medium">
                             {product.title}
                           </Typography>
-                          <Typography variant="small" className="text-gray-500">
+                          <Typography
+                            variant="small"
+                            className="text-gray-500"
+                          >
                             ${product.price}
                           </Typography>
                         </div>
