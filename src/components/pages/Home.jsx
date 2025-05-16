@@ -14,10 +14,6 @@ import {
   FaHeadset,
   FaArrowUp,
 } from "react-icons/fa";
-import { IoFastFood } from "react-icons/io5";
-import { IoIosWoman, IoIosMan } from "react-icons/io";
-import { FaHouse } from "react-icons/fa6";
-
 import {
   FaMobile,
   FaLaptop,
@@ -26,22 +22,22 @@ import {
   FaGamepad,
   FaApple,
 } from "react-icons/fa";
+import { IoFastFood } from "react-icons/io5";
+import { IoIosWoman, IoIosMan } from "react-icons/io";
+import { FaHouse } from "react-icons/fa6";
+
 import { SiAdguard } from "react-icons/si";
-import { useState, useRef, useEffect, useContext, useMemo } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import { CartContext } from "../../context/CartContext";
 import Swal from "sweetalert2";
 import axios from "axios";
-import SideCarsol from "./Home/SideCarsol";
-import FlashSection from "./Home/FlashSection";
 
 const Home = () => {
   const {
-    cart,
     products,
-    cartCount,
-    wishlistCount,
+
     addToCart,
     addToWishlist,
     isInWishlist,
@@ -80,6 +76,7 @@ const Home = () => {
       color: "white",
     });
   };
+
   const handleAddToWishlist = (product) => {
     addToWishlist(product);
     Swal.fire({
@@ -94,6 +91,45 @@ const Home = () => {
       color: "white",
     });
   };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_URL}/products`
+        );
+
+        const products = response.data;
+
+        if (!Array.isArray(products)) {
+          throw new Error("Invalid API response - expected an array");
+        }
+
+        const allProducts = products.map((product) => ({
+          ...product,
+          id: product._id,
+          price: product.price ?? 19.99,
+          discount: product.discount ?? 10,
+          thumbnail:
+            product.thumbnail || product.image || product.images?.[0] || "",
+          rating: Math.min(product.rating ?? 3, 5),
+        }));
+
+        if (!allProducts.length) {
+          console.warn("No valid products found");
+          return;
+        }
+
+        setProducts(allProducts);
+      } catch (err) {
+        setError(err.message || "Failed to fetch products");
+        console.error("Fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   function getTimeLeft(target) {
     const now = new Date();
@@ -145,18 +181,238 @@ const Home = () => {
     }
   };
 
-  return (
-    <div className="lg:container mt-4 mx-4 lg:mx-auto font-mainFont">
-      <SideCarsol />
+  if (isLoading)
+    return <div className="text-center py-20">Loading products...</div>;
+  if (error)
+    return <div className="text-center py-20 text-red-500">Error: {error}</div>;
 
+  return (
+    <div className="lg:container mt-3.5 mx-4 lg:mx-auto font-mainFont">
+      {/* Hero Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-20 md:mb-0 lg:h-[45vh]">
+        {/* Sidebar (Category List) */}
+        <div className="lg:col-span-1 w-[250px] hidden lg:block h-[45vh]">
+          <Card className="w-full h-full">
+            <List>
+              {/* <ListItem className="relative group flex items-center justify-between w-full px-4 py-2">
+                Woman's Fashion
+                <span className="ml-2 inline-block w-2 h-2 border-t-2 border-r-2 border-black transform rotate-45"></span>
+                <div className="absolute left-full top-0 hidden group-hover:flex flex-col rounded-md bg-white shadow-md w-[200px] min-w-[200px] border border-gray-200 z-10 overflow-hidden">
+                  <List>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Dresses
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Tops
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer">
+                      Skirts
+                    </ListItem>
+                  </List>
+                </div>
+              </ListItem>
+              <ListItem className="relative group flex items-center justify-between w-full px-4 py-2">
+                Men's Fashion
+                <span className="ml-2 inline-block w-2 h-2 border-t-2 border-r-2 border-black transform rotate-45"></span>
+                <div className="absolute left-full top-0 hidden group-hover:flex flex-col rounded-md bg-white shadow-md w-[200px] min-w-[200px] border border-gray-200 z-10 overflow-hidden">
+                  <List>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Tops
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer border-b-2">
+                      Pants
+                    </ListItem>
+                    <ListItem className="py-2 hover:bg-gray-100 cursor-pointer">
+                      Shoes
+                    </ListItem>
+                  </List>
+                </div>
+              </ListItem> */}
+              {["Men", "Women", "Electronics", "Food", "Furniture"].map(
+                (category, index) => (
+                  <Link
+                    key={index}
+                    to={`/show-products/${category
+                      .toLowerCase()
+                      .replace(" & ", "-")}`}
+                    className="text-initial"
+                  >
+                    <ListItem className="px-4 py-2 hover:bg-gray-100">
+                      {category}
+                    </ListItem>
+                  </Link>
+                )
+              )}
+            </List>
+          </Card>
+        </div>
+
+        {/* Carousel Section */}
+        <div className="lg:col-span-3 h-[45vh] -z-10">
+          <Carousel
+            autoplay
+            loop
+            prevArrow={() => <></>}
+            nextArrow={() => <></>}
+            className="rounded-xl h-full"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2560&q=80"
+              loading="lazy"
+              alt="image 1"
+              className="h-full w-full object-cover"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80"
+              loading="lazy"
+              alt="image 2"
+              className="h-full w-full object-cover"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?ixlib=rb-4.0.3&auto=format&fit=crop&w=2940&q=80"
+              loading="lazy"
+              alt="image 3"
+              className="h-full w-full object-cover"
+            />
+          </Carousel>
+        </div>
+      </div>
+
+      {/* Flash Sales Section */}
       <div className="md:mt-40">
-        <FlashSection
-          timeLeft={timeLeft}
-          scrollContainer={scrollContainer}
-          products={products}
-          isInWishlist={isInWishlist}
-          rated={rated}
-        />
+        <div className="flex flex-row">
+          <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
+          <h1 className="text-4xl text-main ml-2.5 font-mainFont">Today's</h1>
+        </div>
+        <div className="flex flex-col text-4xl items-center md:flex-row md:gap-10 mt-2.5">
+          <h1 className="font-bold">Flash Sales</h1>
+          <div className="flex flex-col justify-between grow items-center md:flex-row">
+            <div className="p-4 rounded-lg text-2xl text-center w-72 font-bold">
+              <div className="flex justify-between text-sm">
+                <span>Days</span>
+                <span>Hours</span>
+                <span>Minutes</span>
+                <span>Seconds</span>
+              </div>
+              <div className="flex justify-around text-2xl w-full font-bold">
+                <span>{timeLeft.days}</span>
+                <span className="text-main">:</span>
+                <span>{timeLeft.hours}</span>
+                <span className="text-main">:</span>
+                <span>{timeLeft.minutes}</span>
+                <span className="text-main">:</span>
+                <span>{timeLeft.seconds}</span>
+              </div>
+            </div>
+            <div className="flex flex-row gap-5 items-center">
+              <FaArrowLeft
+                className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
+                onClick={() => scroll("left")}
+              />
+              <FaArrowRight
+                className="bg-gray-300 h-8 p-1.5 rounded-2xl w-8 hover:cursor-pointer"
+                onClick={() => scroll("right")}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Flash Sales Products */}
+        <div className="w-full mx-auto relative">
+          <div
+            ref={scrollContainer}
+            className="flex p-4 overflow-x-auto scroll-smooth scrollbar-hide space-x-4"
+          >
+            {products
+              .filter((product) => product.discount > 15)
+              .map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white p-4 rounded-lg text-center min-w-[16em] group hover:cursor-pointer"
+                >
+                  <div className="w-full bg-sec h-64 relative">
+                    <span className="absolute top-2 left-4 bg-main text-white rounded-md w-[55px] h-[26px] text-sm flex items-center justify-center">
+                      -{product.discount.toFixed()}%
+                    </span>
+                    <div className="absolute top-2 gap-2 right-4 flex justify-center items-center flex-col">
+                      <button
+                        aria-label="add product to wishlist"
+                        className="rounded-full z-10"
+                        onClick={() => handleAddToWishlist(product)}
+                      >
+                        <FaHeart
+                          className={`text-xl transition-transform hover:scale-110 ${
+                            isInWishlist(product.id)
+                              ? "fill-red-500"
+                              : "hover:fill-red-500"
+                          }`}
+                        />
+                      </button>
+                      <button
+                        aria-label="show product"
+                        className="rounded-full z-10"
+                      >
+                        <IoMdEye className="text-2xl hover:scale-110" />
+                      </button>
+                    </div>
+                    <div className="h-[100%] flex items-center justify-center relative">
+                      <img
+                        loading="lazy"
+                        src={product.thumbnail}
+                        alt={product.title}
+                        className="rounded-md object-contain h-full"
+                      />
+                      <button
+                        aria-label="add to cart"
+                        className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                        onClick={() => handleAddToCart(product)}
+                      >
+                        <p>Add to Cart</p>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 items-start">
+                    <p className="font-medium">{product.title}</p>
+                    <div className="flex gap-3">
+                      <p className="text-main font-bold">${product.price}</p>
+                      <p className="text-gray-400 line-through">
+                        $
+                        {(product.price / (1 - product.discount / 100)).toFixed(
+                          2
+                        )}
+                      </p>
+                    </div>
+                    <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
+                      ({rated})
+                      <Rating
+                        unratedColor="gray"
+                        value={4}
+                        ratedColor="amber"
+                        onChange={(value) => setRated(value)}
+                        className="mr-2"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          {showArrowUP && (
+            <FaArrowUp
+              className="fixed right-14 bottom-7 bg-white text-black text-4xl p-2 rounded-full cursor-pointer hover:bg-gray-700 transition-colors duration-300 mix-blend-difference z-40"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            />
+          )}
+
+          <div className="flex justify-center mb-2 mt-4">
+            <Link to="/show-products">
+              <Button className="bg-main px-12 py-5 capitalize">
+                View All Products
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Categories Section */}
         <div className="bg-gray-300 h-[2px] w-full my-10"></div>
         <div className="flex flex-row">
@@ -192,7 +448,7 @@ const Home = () => {
           </div>
         </div>
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {categories.map((category, index) => (
               <Link
                 key={index}
@@ -242,7 +498,7 @@ const Home = () => {
                 >
                   <FaHeart
                     className={`text-xl transition-transform hover:scale-110 ${
-                      isInWishlist(product._id)
+                      isInWishlist(product.id)
                         ? "fill-red-500"
                         : "hover:fill-red-500"
                     }`}
@@ -290,9 +546,11 @@ const Home = () => {
         ))}
       </div>
 
+      {/* Advertisement Banner */}
       <div className="relative bg-gradient-to-r from-main to-blue-800 rounded-xl shadow-xl overflow-hidden">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between">
+            {/* Banner Content */}
             <div className="md:w-2/3 mb-6 md:mb-0">
               <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
                 Limited Time Offer!
@@ -341,12 +599,14 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-0 w-32 h-32 bg-purple-400 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-400 rounded-full opacity-20 translate-x-1/2 translate-y-1/2"></div>
         </div>
       </div>
 
+      {/* Our Products Section */}
       <div className="flex flex-row mt-10">
         <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
         <h1 className="text-4xl text-main ml-2.5">Our Products</h1>
@@ -375,7 +635,7 @@ const Home = () => {
                 >
                   <FaHeart
                     className={`text-xl transition-transform hover:scale-110 ${
-                      isInWishlist(product._id)
+                      isInWishlist(product.id)
                         ? "fill-red-500"
                         : "hover:fill-red-500"
                     }`}
@@ -457,11 +717,9 @@ const Home = () => {
               <p className="text-sm mb-2">
                 Black and White version of the PS5 coming out sale
               </p>
-              <Link to={"/show-products/electronics"}>
-                <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
-                  Shop Now
-                </button>
-              </Link>
+              <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
+                Shop Now
+              </button>
             </div>
           </div>
           {/* Women's Collections */}
@@ -477,13 +735,12 @@ const Home = () => {
               <p className="text-sm mb-2">
                 Featured woman collections that give you another vibe
               </p>
-              <Link to={"/show-products/women"}>
-                <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
-                  Shop Now
-                </button>
-              </Link>
+              <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
+                Shop Now
+              </button>
             </div>
           </div>
+          {/* Speakers */}
           <div className="col-span-2 md:col-span-3 relative group bg-black">
             <img
               src="/speakers.webp"
@@ -494,11 +751,9 @@ const Home = () => {
             <div className="absolute inset-0  flex flex-col justify-end p-4 text-white items-start gap-5">
               <h2 className="text-xl font-bold">Speakers</h2>
               <p className="text-sm mb-2">Amazon wireless speakers</p>
-              <Link to={"/show-products/electronics"}>
-                <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
-                  Shop Now
-                </button>
-              </Link>
+              <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
+                Shop Now
+              </button>
             </div>
           </div>
           {/* Perfume */}
@@ -512,11 +767,9 @@ const Home = () => {
             <div className="absolute inset-0 flex flex-col justify-end p-4 text-white items-start gap-5">
               <h2 className="text-xl font-bold">Perfume</h2>
               <p className="text-sm mb-2">Gucci Intense Oud EDP</p>
-              <Link to={"/show-products/women"}>
-                <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
-                  Shop Now
-                </button>
-              </Link>
+              <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
+                Shop Now
+              </button>
             </div>
           </div>
         </div>
