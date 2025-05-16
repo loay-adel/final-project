@@ -96,7 +96,7 @@ const Cart = () => {
                       <tbody>
                         {cart.map((item) => (
                           <tr
-                            key={item.id}
+                            key={item._id}
                             className="border-b hover:bg-gray-50"
                           >
                             <td className="py-4 flex items-center">
@@ -115,7 +115,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => decreaseQty(item.id)}
+                                  onClick={() => decreaseQty(item._id)}
                                   disabled={item.quantity <= 1}
                                 >
                                   -
@@ -126,7 +126,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => increaseQty(item.id)}
+                                  onClick={() => increaseQty(item._id)}
                                 >
                                   +
                                 </IconButton>
@@ -138,7 +138,7 @@ const Cart = () => {
                             <td className="py-4">
                               <button
                                 className="text-red-600 hover:text-red-800 transition font-medium"
-                                onClick={() => handleRemoveItem(item.id)}
+                                onClick={() => handleRemoveItem(item._id)}
                               >
                                 Remove
                               </button>
@@ -158,7 +158,7 @@ const Cart = () => {
                       Looks like you haven't added anything to your cart yet.
                     </p>
                     <Link
-                      to="/product"
+                      to="/show-products"
                       className="inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300"
                     >
                       Continue Shopping
@@ -173,7 +173,7 @@ const Cart = () => {
                   <div className="space-y-4">
                     {cart.map((item) => (
                       <div
-                        key={item.id}
+                        key={item._id}
                         className="border rounded-lg p-4 hover:shadow-md transition"
                       >
                         <div className="flex gap-4">
@@ -194,7 +194,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => decreaseQty(item.id)}
+                                  onClick={() => decreaseQty(item._id)}
                                   disabled={item.quantity <= 1}
                                 >
                                   -
@@ -205,7 +205,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => increaseQty(item.id)}
+                                  onClick={() => increaseQty(item)}
                                 >
                                   +
                                 </IconButton>
@@ -326,4 +326,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default Cart;

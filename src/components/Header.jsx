@@ -22,7 +22,9 @@ import { jwtDecode } from "jwt-decode";
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
-  const { cartCount, wishlistCount, user, setUser } = useContext(CartContext);
+
+  const { cartCount, wishlistCount , user , setUser ,fetchUserData ,setCart,cart} = useContext(CartContext);
+
   const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +51,30 @@ const Header = () => {
       } catch (error) {
         console.log(error);
 
+
+
+      
+  useEffect(() => {
+  const init = async () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const userData = await fetchUserData(decoded._id);
+
+        if (userData) {
+          setIsAuthenticatedState(true);
+          setCart(userData.cart || []);
+          setUser(userData);
+        } else {
+          // fallback إذا المستخدم مش موجود
+          setIsAuthenticatedState(false);
+          setUser(null);
+          localStorage.removeItem("token");
+        }
+      } catch (error) {
+
         setIsAuthenticatedState(false);
         setUser(null);
         localStorage.removeItem("token");
@@ -57,7 +83,13 @@ const Header = () => {
       setIsAuthenticatedState(false);
       setUser(null);
     }
-  }, []); //add depandce
+
+
+
+  init();
+}, []);
+
+
 
   // Check authentication status on mount
   useEffect(() => {
@@ -239,9 +271,9 @@ const Header = () => {
               <Link to="/cart">
                 <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
               </Link>
-              {cartCount > 0 && (
+             {user && cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {cartCount}
+                  {cart.length}
                 </span>
               )}
             </div>
@@ -260,7 +292,9 @@ const Header = () => {
                     <FiUser />
                     <Typography variant="small" className="font-medium">
                       <Link to="/account">
-                        My Profile {user && user.firstName}
+
+                        {user && <span>Welcome, {user.firstName}</span>}
+
                       </Link>
                     </Typography>
                   </MenuItem>

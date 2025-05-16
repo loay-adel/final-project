@@ -13,13 +13,15 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [products, setProducts] = useState([]);
-    const [user ,setUser] = useState({})
-  // Helper function to get user ID
+  const [user, setUser] = useState(null);
+  
   const getUserId = useCallback(() => {
-    return localStorage.getItem("userId");
-  }, []);
+    if (!user || !user._id) {
+      return null;
+    }
+    return user._id;
+  }, [user]);
 
-  // Memoized cart calculations
   const { total, count } = useMemo(() => {
     return cart.reduce(
       (acc, item) => {
@@ -36,7 +38,9 @@ export const CartProvider = ({ children }) => {
   // Fetch user data helper
   const fetchUserData = useCallback(async (userId) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_URL}/${userId}`);
+      const response = await axios.get(`https://gioco-rx7d.vercel.app/api/users/${userId}`);
+       console.log(response.data);
+        
       return response.data;
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -47,7 +51,8 @@ export const CartProvider = ({ children }) => {
   // Update user data helper
   const updateUserData = useCallback(async (userId, updates) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_URL}/users/${userId}`, updates);
+      
+      const res = await axios.patch(`https://gioco-rx7d.vercel.app/api/users/${userId}`, updates);
       return true;
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -65,47 +70,53 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Cart operations with backend/local storage sync
   const addToCart = useCallback(
-    (product) => {
-      const userId = getUserId();
+  (product) => {
+    const userId = getUserId();
 
-      setCart((prevCart) => {
-        const existing = prevCart.find((item) => item.id === product.id);
-        const newCart = existing
-          ? prevCart.map((item) =>
-              item.id === product.id
-                ? {
-                    ...item,
-                    quantity: item.quantity + 1,
-                    subtotal: (item.quantity + 1) * item.price,
-                  }
-                : item
-            )
-          : [...prevCart, { ...product, quantity: 1, subtotal: product.price }];
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item._id === product._id);
+      let newCart;
 
-        if (userId) {
-          updateUserData(userId, { cart: newCart });
-        } else {
-          localStorage.setItem("guestCart", JSON.stringify(newCart));
-        }
-        return newCart;
-      });
-    },
-    [getUserId, updateUserData]
-  );
+      if (existing) {
+        newCart = prevCart.map((item) =>
+          item._id === product._id
+            ? {
+                ...item,
+                quantity: item.quantity += 1,
+                subtotal: (item.quantity + 1) * item.price,
+              }
+            : item
+        );
+      } else {
+        newCart = [...prevCart, { ...product, quantity: 1, subtotal: product.price }];
+      }
+      
+      if (userId) {
+        updateUserData(userId, { cart: newCart });
+      } else {
+        localStorage.setItem("guestCart", JSON.stringify(newCart));
+      }
+
+      return newCart;
+    });
+  },
+  [getUserId, updateUserData]
+);
+
 
   const increaseQty = useCallback(
     (id) => {
       const userId = getUserId();
-
+       console.log(id);
+        
       setCart((prevCart) => {
         const newCart = prevCart.map((item) =>
-          item.id === id
+          item._id === id
             ? {
                 ...item,
-                quantity: item.quantity + 1,
-                subtotal: (item.quantity + 1) * item.price,
+                quantity: item.quantity += 1,
+                subtotal: (item.quantity) * item.price,
               }
             : item
         );
@@ -124,15 +135,16 @@ export const CartProvider = ({ children }) => {
   const decreaseQty = useCallback(
     (id) => {
       const userId = getUserId();
-
+      console.log(id);
+      
       setCart((prevCart) => {
         const newCart = prevCart
           .map((item) =>
-            item.id === id
+            item._id === id
               ? {
                   ...item,
-                  quantity: item.quantity - 1,
-                  subtotal: (item.quantity - 1) * item.price,
+                  quantity: item.quantity -= 1,
+                  subtotal: (item.quantity) * item.price,
                 }
               : item
           )
@@ -152,9 +164,9 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = useCallback(
     (id) => {
       const userId = getUserId();
-
+        
       setCart((prevCart) => {
-        const newCart = prevCart.filter((item) => item.id !== id);
+        const newCart = prevCart.filter((item) => item._id !== id);
 
         if (userId) {
           updateUserData(userId, { cart: newCart });
@@ -185,9 +197,9 @@ export const CartProvider = ({ children }) => {
       const userId = getUserId();
 
       setWishlist((prev) => {
-        const newWishlist = prev.includes(product.id)
+        const newWishlist = prev.includes(product._id)
           ? prev
-          : [...prev, product.id];
+          : [...prev, product._id];
 
         if (userId) {
           updateUserData(userId, { wishlist: newWishlist });
@@ -271,6 +283,8 @@ export const CartProvider = ({ children }) => {
       fetchAllProducts,
       user,
       setUser,
+      fetchUserData,
+      setCart,
     }),
     [
       cart,
@@ -291,6 +305,8 @@ export const CartProvider = ({ children }) => {
       fetchAllProducts,
       user,
       setUser,
+      fetchUserData,
+      setCart,
     ]
   );
 

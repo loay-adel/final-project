@@ -2,33 +2,45 @@ import React, { useState, useContext } from "react";
 import { Button } from "@material-tailwind/react";
 import { CartContext } from "../../../context/CartContext";
 
-const ShowProduct = ({ product, handleAddToCart }) => {
-  const { addToCart } = useContext(CartContext);
+const ShowProduct = ({ product }) => {
+  const { addToCart, increaseQty, decreaseQty, cart } = useContext(CartContext);
   const [quantity, setQuantity] = useState(1);
 
-  const increaseQty = () => {
+  const cartItem = cart.find(item => item._id === product?._id);
+  const currentQuantity = cartItem ? cartItem.quantity : 0;
+
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      quantity: quantity,
+      subtotal: product.price * quantity
+    });
+    setQuantity(1); 
+  };
+
+  const handleIncrease = () => {
     if (quantity < product.availableQuantity) {
-      setQuantity((prev) => prev + 1);
+      setQuantity(prev => prev + 1);
     }
   };
 
-  const decreaseQty = () => {
+  const handleDecrease = () => {
     if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
+      setQuantity(prev => prev - 1);
     }
   };
 
-  if (!product)
+  if (!product) {
     return (
       <div className="text-center py-10">
-        Error in fetching data .. please try again later
+        Error in fetching data... please try again later
       </div>
     );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 bg-white rounded-xl overflow-hidden max-w-5xl mx-auto my-8 shadow-lg">
       <div className="relative bg-gray-50 flex items-center justify-center p-8">
-                  
         {product.availableQuantity <= 5 && (
           <span className="absolute top-4 right-4 bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full">
             Only {product.availableQuantity} left!
@@ -76,7 +88,7 @@ const ShowProduct = ({ product, handleAddToCart }) => {
           <span className="text-gray-700 font-medium">Quantity:</span>
           <div className="flex items-center gap-3">
             <Button
-              onClick={decreaseQty}
+              onClick={handleDecrease}
               disabled={quantity <= 1}
               className="!p-2 !min-w-0 !rounded-full !bg-gray-200 hover:!bg-gray-300 !text-gray-800"
               ripple={false}
@@ -87,7 +99,7 @@ const ShowProduct = ({ product, handleAddToCart }) => {
               {quantity}
             </span>
             <Button
-              onClick={increaseQty}
+              onClick={handleIncrease}
               disabled={quantity >= product.availableQuantity}
               className="!p-2 !min-w-0 !rounded-full !bg-gray-200 hover:!bg-gray-300 !text-gray-800"
               ripple={false}
@@ -107,7 +119,11 @@ const ShowProduct = ({ product, handleAddToCart }) => {
           }`}
           fullWidth
         >
-          {product.availableQuantity === 0 ? "Out of Stock" : "Add to Cart"}
+          {product.availableQuantity === 0 
+            ? "Out of Stock" 
+            : currentQuantity > 0 
+              ? `Add More (${currentQuantity} in cart)`
+              : "Add to Cart"}
         </Button>
 
         {product.availableQuantity <= 10 && product.availableQuantity > 0 && (
