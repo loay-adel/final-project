@@ -115,7 +115,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => decreaseQty(item.id)}
+                                  onClick={() => decreaseQty(item._id)}
                                   disabled={item.quantity <= 1}
                                 >
                                   -
@@ -126,7 +126,7 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => increaseQty(item.id)}
+                                  onClick={() => increaseQty(item._id)}
                                 >
                                   +
                                 </IconButton>
@@ -138,7 +138,7 @@ const Cart = () => {
                             <td className="py-4">
                               <button
                                 className="text-red-600 hover:text-red-800 transition font-medium"
-                                onClick={() => handleRemoveItem(item.id)}
+                                onClick={() => handleRemoveItem(item._id)}
                               >
                                 Remove
                               </button>

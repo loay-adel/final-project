@@ -1,4 +1,5 @@
 import { List, ListItem, Card } from "@material-tailwind/react";
+import { CartContext } from "../../../context/CartContext";
 import {
   Carousel,
   IconButton,
@@ -6,7 +7,8 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-
+import { useContext } from "react";
+import Swal from "sweetalert2";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -19,7 +21,24 @@ import { IoMdEye } from "react-icons/io";
 
 import { Link } from "react-router-dom";
 
+
+
 export default function FlashSection({timeLeft,scrollContainer,products,isInWishlist,rated}) {
+ const { addToCart} = useContext(CartContext);
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    Swal.fire({
+      title: "Product Added to Cart!",
+      text: `${product.title} has been successfully added to your shopping cart.`,
+      icon: "success",
+      showConfirmButton: false,
+      timer: 1500,
+      position: "bottom-end",
+      toast: true,
+      background: "#48bb78",
+      color: "white",
+    });
+  };
   return (
     <div>
       <div className="flex flex-row">

@@ -73,7 +73,6 @@ export const CartProvider = ({ children }) => {
   const addToCart = useCallback(
   (product) => {
     const userId = getUserId();
-        console.log(userId);
 
     setCart((prevCart) => {
       const existing = prevCart.find((item) => item._id === product._id);
@@ -109,6 +108,7 @@ export const CartProvider = ({ children }) => {
   const increaseQty = useCallback(
     (id) => {
       const userId = getUserId();
+       console.log(id);
         
       setCart((prevCart) => {
         const newCart = prevCart.map((item) =>
@@ -116,7 +116,7 @@ export const CartProvider = ({ children }) => {
             ? {
                 ...item,
                 quantity: item.quantity += 1,
-                subtotal: (item.quantity + 1) * item.price,
+                subtotal: (item.quantity) * item.price,
               }
             : item
         );
@@ -135,7 +135,8 @@ export const CartProvider = ({ children }) => {
   const decreaseQty = useCallback(
     (id) => {
       const userId = getUserId();
-
+      console.log(id);
+      
       setCart((prevCart) => {
         const newCart = prevCart
           .map((item) =>
@@ -143,7 +144,7 @@ export const CartProvider = ({ children }) => {
               ? {
                   ...item,
                   quantity: item.quantity -= 1,
-                  subtotal: (item.quantity - 1) * item.price,
+                  subtotal: (item.quantity) * item.price,
                 }
               : item
           )
@@ -282,6 +283,8 @@ export const CartProvider = ({ children }) => {
       fetchAllProducts,
       user,
       setUser,
+      fetchUserData,
+      setCart,
     }),
     [
       cart,
@@ -302,6 +305,8 @@ export const CartProvider = ({ children }) => {
       fetchAllProducts,
       user,
       setUser,
+      fetchUserData,
+      setCart,
     ]
   );
 
