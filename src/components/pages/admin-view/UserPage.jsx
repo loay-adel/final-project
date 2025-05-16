@@ -93,8 +93,6 @@ const UsersPage = () => {
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, promote",
     }).then(async (result) => {
-      console.log(user);
-
       if (result.isConfirmed) {
         try {
           const res = await fetch(

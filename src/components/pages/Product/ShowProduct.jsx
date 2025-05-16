@@ -3,30 +3,30 @@ import { Button } from "@material-tailwind/react";
 import { CartContext } from "../../../context/CartContext";
 
 const ShowProduct = ({ product }) => {
-  const { addToCart, increaseQty, decreaseQty, cart } = useContext(CartContext);
+  const { addToCart, cart } = useContext(CartContext);
   const [quantity, setQuantity] = useState(1);
 
-  const cartItem = cart.find(item => item._id === product?._id);
+  const cartItem = cart.find((item) => item._id === product?._id);
   const currentQuantity = cartItem ? cartItem.quantity : 0;
 
   const handleAddToCart = () => {
     addToCart({
       ...product,
       quantity: quantity,
-      subtotal: product.price * quantity
+      subtotal: product.price * quantity,
     });
-    setQuantity(1); 
+    setQuantity(1);
   };
 
   const handleIncrease = () => {
     if (quantity < product.availableQuantity) {
-      setQuantity(prev => prev + 1);
+      setQuantity((prev) => prev + 1);
     }
   };
 
   const handleDecrease = () => {
     if (quantity > 1) {
-      setQuantity(prev => prev - 1);
+      setQuantity((prev) => prev - 1);
     }
   };
 
@@ -119,11 +119,11 @@ const ShowProduct = ({ product }) => {
           }`}
           fullWidth
         >
-          {product.availableQuantity === 0 
-            ? "Out of Stock" 
-            : currentQuantity > 0 
-              ? `Add More (${currentQuantity} in cart)`
-              : "Add to Cart"}
+          {product.availableQuantity === 0
+            ? "Out of Stock"
+            : currentQuantity > 0
+            ? `Add More (${currentQuantity} in cart)`
+            : "Add to Cart"}
         </Button>
 
         {product.availableQuantity <= 10 && product.availableQuantity > 0 && (

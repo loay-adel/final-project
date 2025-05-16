@@ -19,35 +19,35 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
     }
-    
+
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-    
+
     if (formData.phone && !/^\d{10,15}$/.test(formData.phone)) {
       newErrors.phone = "Phone number is invalid";
     }
-    
+
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -62,29 +62,26 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const response = await axios({
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         method: "post",
         url: "https://gioco-rx7d.vercel.app/api/users/register",
         data: formData,
       });
-      
+
       if (response.data.status === 201) {
-        // Store user ID in localStorage if available in response
-        console.log(response);
-        
         if (response.data.userId) {
-          localStorage.setItem('userId', response.data.userId);
+          localStorage.setItem("userId", response.data.userId);
         }
         navigate("/signin");
       }
@@ -124,11 +121,11 @@ const Signup = () => {
               Enter your details below
             </Typography>
           </div>
-          
+
           {errors.general && (
             <p className="text-red-500 text-center mt-4">{errors.general}</p>
           )}
-          
+
           <form onSubmit={handleSubmit} className="mt-8 mb-2 space-y-[1.5em]">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -142,7 +139,9 @@ const Signup = () => {
                   disabled={loading}
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
               <div>
@@ -160,7 +159,7 @@ const Signup = () => {
                 )}
               </div>
             </div>
-            
+
             <div>
               <Input
                 name="email"
@@ -176,7 +175,7 @@ const Signup = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
               )}
             </div>
-            
+
             <div>
               <Input
                 name="phone"
@@ -192,7 +191,7 @@ const Signup = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
               )}
             </div>
-            
+
             <div>
               <Input
                 name="password"
@@ -208,7 +207,7 @@ const Signup = () => {
                 <p className="text-red-500 text-sm mt-1">{errors.password}</p>
               )}
             </div>
-            
+
             <div>
               <Input
                 name="confirmPassword"
@@ -221,7 +220,9 @@ const Signup = () => {
                 disabled={loading}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 

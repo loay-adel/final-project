@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   FiHome,
   FiPackage,
@@ -19,11 +19,29 @@ function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const { products } = useContext(CartContext);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const handleLogout = () => {
     navigate("/admin-signin");
   };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
+  const fetchUsers = () => {
+    setLoading(true);
+    fetch(`${import.meta.env.VITE_URL}/users`)
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch users:", err);
+        setLoading(false);
+      });
+  };
   const renderContent = () => {
     switch (activeTab) {
       case "products":
@@ -31,9 +49,11 @@ function Dashboard() {
       case "orders":
         return <OrdersPage />;
       case "users":
-        return <UsersPage />;
+        return <UsersPage fetchUsers={fetchUsers} />;
+
       case "dashboard":
       default:
+        if (loading) return <p>Loading users...</p>;
         return (
           <div className="dashboard-content">
             <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
@@ -48,7 +68,7 @@ function Dashboard() {
               </div>
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="font-medium text-gray-700">Active Users</h3>
-                <p className="text-3xl font-bold mt-2">89</p>
+                <p className="text-3xl font-bold mt-2">{users.length}</p>
               </div>
             </div>
           </div>

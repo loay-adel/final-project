@@ -1,7 +1,7 @@
 // src/components/Signin.jsx
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState,  } from "react";
+import { useContext, useState } from "react";
 import { CartContext } from "../../context/CartContext";
 import axios from "axios";
 
@@ -11,63 +11,59 @@ const Signin = () => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
-
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-    const { setUser} = useContext(CartContext)
-
+  const { setUser } = useContext(CartContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials(prev => ({ ...prev, [name]: value }));
+    setCredentials((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!credentials.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
       newErrors.email = "Email is invalid";
     }
-    
+
     if (!credentials.password) {
       newErrors.password = "Password is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const response = await axios({
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         method: "post",
         url: "https://gioco-rx7d.vercel.app/api/users/login",
         data: credentials,
       });
-      
+
       if (response.data.status === 200) {
-        // Store user ID and token in localStorage
-        console.log(response.data.data.data);
-        localStorage.setItem('token', response.data.data.data);
+        localStorage.setItem("token", response.data.data.data);
         navigate("/");
-        setUser(response.data.data.data)
+        setUser(response.data.data.data);
       }
     } catch (error) {
       if (error.response) {
@@ -105,7 +101,9 @@ const Signin = () => {
         alert("Password reset link sent to your email!");
         onClose();
       } catch (error) {
-        setForgetErrors({ general: "Failed to send reset link. Please try again." });
+        setForgetErrors({
+          general: "Failed to send reset link. Please try again.",
+        });
       } finally {
         setForgetLoading(false);
       }
@@ -184,7 +182,6 @@ const Signin = () => {
           {errors.general && (
             <p className="text-red-500 text-center mt-4">{errors.general}</p>
           )}
-        
 
           <form onSubmit={handleSubmit} className="mt-8 mb-2 space-y-[1.5em]">
             <div>

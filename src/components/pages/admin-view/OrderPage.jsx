@@ -51,7 +51,7 @@ const OrdersPage = () => {
 
         Swal.fire("Updated!", "The order status has been updated.", "success");
       } catch (err) {
-        Swal.fire("Error", "Failed to update order status.", "error");
+        Swal.fire("Error", "Failed to update order status.", err);
       }
     }
   };
@@ -64,70 +64,74 @@ const OrdersPage = () => {
     <div>
       <h2 className="text-2xl font-bold mb-6">Orders</h2>
       <ul className="space-y-4">
-        {orders.map((order) => (
-          <li
-            key={order.id}
-            className="bg-white p-6 rounded-lg shadow relative"
-          >
-            {/* حالة الطلب في الزاوية */}
-            <span
-              className={`absolute top-2 right-2 px-3 py-1 text-sm rounded-full font-semibold capitalize ${
-                order.status === "pending"
-                  ? "bg-gray-200 text-gray-800"
-                  : order.status === "processing"
-                  ? "bg-yellow-200 text-yellow-800"
-                  : order.status === "shipped"
-                  ? "bg-blue-200 text-blue-800"
-                  : order.status === "delivered"
-                  ? "bg-green-200 text-green-800"
-                  : order.status === "cancelled"
-                  ? "bg-red-200 text-red-800"
-                  : "bg-gray-200 text-gray-800"
-              }`}
+        {orders.length > 1 ? (
+          orders.map((order) => (
+            <li
+              key={order.id}
+              className="bg-white p-6 rounded-lg shadow relative"
             >
-              {order.status}
-            </span>
+              {/* حالة الطلب في الزاوية */}
+              <span
+                className={`absolute top-2 right-2 px-3 py-1 text-sm rounded-full font-semibold capitalize ${
+                  order.status === "pending"
+                    ? "bg-gray-200 text-gray-800"
+                    : order.status === "processing"
+                    ? "bg-yellow-200 text-yellow-800"
+                    : order.status === "shipped"
+                    ? "bg-blue-200 text-blue-800"
+                    : order.status === "delivered"
+                    ? "bg-green-200 text-green-800"
+                    : order.status === "cancelled"
+                    ? "bg-red-200 text-red-800"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {order.status}
+              </span>
 
-            <div className="mb-2">
-              <span className="font-semibold">Order ID:</span> {order.id}
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">User ID:</span> {order.userId}
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Total:</span> $
-              {order.total.toFixed(2)}
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Payment Method:</span>{" "}
-              {order.paymentMethod}
-            </div>
-            <div className="mb-2">
-              <span className="font-semibold">Created At:</span>{" "}
-              {new Date(order.createdAt).toLocaleString()}
-            </div>
-            <div>
-              <span className="font-semibold">Shipping Address:</span>
-              <p className="ml-4">
-                {order.shippingAddress.street}, {order.shippingAddress.city},{" "}
-                {order.shippingAddress.state} {order.shippingAddress.zip},{" "}
-                {order.shippingAddress.country}
-              </p>
-            </div>
+              <div className="mb-2">
+                <span className="font-semibold">Order ID:</span> {order.id}
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">User ID:</span> {order.userId}
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Total:</span> $
+                {order.total.toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Payment Method:</span>{" "}
+                {order.paymentMethod}
+              </div>
+              <div className="mb-2">
+                <span className="font-semibold">Created At:</span>{" "}
+                {new Date(order.createdAt).toLocaleString()}
+              </div>
+              <div>
+                <span className="font-semibold">Shipping Address:</span>
+                <p className="ml-4">
+                  {order.shippingAddress.street}, {order.shippingAddress.city},{" "}
+                  {order.shippingAddress.state} {order.shippingAddress.zip},{" "}
+                  {order.shippingAddress.country}
+                </p>
+              </div>
 
-            {/* زر تغيير الحالة */}
-            <div className="mt-4">
-              {order.status !== "delivered" && (
-                <button
-                  onClick={() => updateOrderStatus(order.id, "delivered")}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                >
-                  Mark as Delivered
-                </button>
-              )}
-            </div>
-          </li>
-        ))}
+              {/* زر تغيير الحالة */}
+              <div className="mt-4">
+                {order.status !== "delivered" && (
+                  <button
+                    onClick={() => updateOrderStatus(order.id, "delivered")}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                  >
+                    Mark as Delivered
+                  </button>
+                )}
+              </div>
+            </li>
+          ))
+        ) : (
+          <p> Coming soon</p>
+        )}
       </ul>
     </div>
   );

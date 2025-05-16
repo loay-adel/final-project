@@ -198,9 +198,11 @@ const Wishlist = () => {
               <div className="w-1 h-8 bg-red-500 mr-3"></div>
               <h2 className="text-xl font-semibold">Just For You</h2>
             </div>
-            <Button variant="outlined" className="text-sm px-4 bg-main">
-              See All
-            </Button>
+            <Link to="/show-products">
+              <Button variant="filled" className="text-sm px-4 bg-main">
+                See All
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -275,7 +277,15 @@ const ProductCard = ({
             size="sm"
             className="rounded-full bg-white hover:bg-gray-100 text-gray-700 shadow-md"
           >
-            <FiEye className="h-4 w-4" />
+            <Link
+              to={`/show-products/${product.category.toLowerCase()}/${
+                product._id
+              }`}
+              aria-label="show product"
+              className="rounded-full z-10"
+            >
+              <FiEye className="text-lg hover:scale-110" />
+            </Link>
           </Button>
         </div>
       </div>
