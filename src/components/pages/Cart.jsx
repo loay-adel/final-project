@@ -205,14 +205,14 @@ const Cart = () => {
                                 <IconButton
                                   color="red"
                                   size="sm"
-                                  onClick={() => increaseQty(item)}
+                                  onClick={() => increaseQty(item._id)}
                                 >
                                   +
                                 </IconButton>
                               </div>
                               <button
                                 className="text-red-600 hover:text-red-800 text-sm font-medium"
-                                onClick={() => handleRemoveItem(item.id)}
+                                onClick={() => handleRemoveItem(item._id)}
                               >
                                 Remove
                               </button>
@@ -235,7 +235,7 @@ const Cart = () => {
                       Start shopping to add items to your cart.
                     </p>
                     <Link
-                      to="/product"
+                      to="/show-product"
                       className="inline-block bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition"
                     >
                       Continue Shopping
@@ -248,7 +248,7 @@ const Cart = () => {
                 <>
                   <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
                     <Link
-                      to="/product"
+                      to="/show-product"
                       className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-center transition"
                     >
                       Return To Shoping

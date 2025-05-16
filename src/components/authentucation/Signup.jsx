@@ -80,6 +80,9 @@ const Signup = () => {
       });
 
       if (response.data.status === 201) {
+        // Store user ID in localStorage if available in response
+        // console.log(response);
+
         if (response.data.userId) {
           localStorage.setItem("userId", response.data.userId);
         }
@@ -239,7 +242,7 @@ const Signup = () => {
           <Typography color="gray" className="mt-4 text-center font-normal">
             Already have an account?{" "}
             <Link
-              to="/login"
+              to="/signin"
               className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
             >
               Sign In
