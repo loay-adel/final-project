@@ -1,6 +1,3 @@
-
-
-
 // src/components/Header.jsx
 import {
   Navbar,
@@ -25,7 +22,7 @@ import { jwtDecode } from "jwt-decode";
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
-  const { cartCount, wishlistCount , user , setUser } = useContext(CartContext);
+  const { cartCount, wishlistCount, user, setUser } = useContext(CartContext);
   const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,56 +30,43 @@ const Header = () => {
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setIsAuthenticatedState(true);
+        setUser({
+          firstName: decoded.firstName || "User",
+          email: decoded.email,
+          role: decoded.role,
+          addresses: decoded.addresses || [],
+          wishlist: decoded.wishlist || [],
+          cart: decoded.cart || [],
+          _id: decoded._id,
+        });
+      } catch (error) {
+        console.log(error);
 
-
-      
-        
-      
-
-
-
-useEffect(() => {
-  const token = localStorage.getItem("token");
- 
-
-  if (token) {
-    try {
-      const decoded = jwtDecode(token); 
-      setIsAuthenticatedState(true);
-      setUser({
-        firstName: decoded.firstName || "User",
-        email: decoded.email,
-        role: decoded.role,
-        addresses: decoded.addresses || [],
-        wishlist: decoded.wishlist || [],
-        cart: decoded.cart || [],
-        _id: decoded._id,
-      });
-
-    } catch (error) {
-    
+        setIsAuthenticatedState(false);
+        setUser(null);
+        localStorage.removeItem("token");
+      }
+    } else {
       setIsAuthenticatedState(false);
       setUser(null);
-      localStorage.removeItem("token"); 
     }
-  } else {
-    
-    setIsAuthenticatedState(false);
-    setUser(null); 
-  }
-}, []);
-console.log(user);
+  }, []); //add depandce
 
   // Check authentication status on mount
   useEffect(() => {
-    if(localStorage.getItem("token")){
-     setIsAuthenticatedState(true)
-    }else{
-      setIsAuthenticatedState(false)
+    if (localStorage.getItem("token")) {
+      setIsAuthenticatedState(true);
+    } else {
+      setIsAuthenticatedState(false);
     }
-
-  }, [user,isAuthenticatedState]);
+  }, [user, isAuthenticatedState]);
 
   const handleSearch = async (query) => {
     if (query.trim().length === 0) {
@@ -134,9 +118,9 @@ console.log(user);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    setUser({})
-      navigate("/");
+    localStorage.removeItem("token");
+    setUser({});
+    navigate("/");
     // signOut(navigate);
     setIsAuthenticatedState(false);
     // setUser(null);
@@ -215,7 +199,9 @@ console.log(user);
                             src={product.image || product.thumbnail}
                             alt={product.title}
                             className="w-10 h-10 object-cover rounded mr-3"
-                            onError={(e) => (e.target.src = "/fallback-image.jpg")} // Fallback image
+                            onError={(e) =>
+                              (e.target.src = "/fallback-image.jpg")
+                            } // Fallback image
                           />
                           <div>
                             <Typography variant="small" className="font-medium">
@@ -274,7 +260,7 @@ console.log(user);
                     <FiUser />
                     <Typography variant="small" className="font-medium">
                       <Link to="/account">
-                        My Profile {user.firstName}
+                        My Profile {user && user.firstName}
                       </Link>
                     </Typography>
                   </MenuItem>
@@ -372,16 +358,15 @@ console.log(user);
                           src={product.image || product.thumbnail}
                           alt={product.title}
                           className="w-10 h-10 object-cover rounded mr-3"
-                          onError={(e) => (e.target.src = "/fallback-image.jpg")} // Fallback image
+                          onError={(e) =>
+                            (e.target.src = "/fallback-image.jpg")
+                          } // Fallback image
                         />
                         <div>
                           <Typography variant="small" className="font-medium">
                             {product.title}
                           </Typography>
-                          <Typography
-                            variant="small"
-                            className="text-gray-500"
-                          >
+                          <Typography variant="small" className="text-gray-500">
                             ${product.price}
                           </Typography>
                         </div>

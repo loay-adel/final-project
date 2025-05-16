@@ -21,11 +21,9 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          {category?
-          category.charAt(0).toUpperCase() + category.slice(1)
-            :
-          "All Products"
-        }
+          {category
+            ? category.charAt(0).toUpperCase() + category.slice(1)
+            : "All Products"}
         </h2>
         <p className="text-gray-600 text-lg">Discover our premium collection</p>
         <div className="w-20 h-1 bg-blue-500 mx-auto mt-4 rounded-full"></div>
@@ -42,17 +40,14 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
           <Typography color="gray" className="mb-4">
             We couldn't find any products in this category
           </Typography>
-          <Button color="blue" variant="outlined" className="mt-4">
-            <FaArrowLeft className="mr-2" />
-            Back to Categories
-          </Button>
+          <Link to="/">
+            <Button color="blue" variant="outlined" className="mt-4">
+              <FaArrowLeft className="mr-2" />
+              Back to Categories
+            </Button>
+          </Link>
         </div>
-      ) : 
-      
-      
-      
-      
-      (
+      ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.length == 0 ? (
             <h1>loading</h1>
@@ -74,11 +69,11 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
                     <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                       Only {product.availableQuantity} left
                     </span>
-                  ):
-                  <span className="absolute top-3 right-3 bg-blue-gray-300 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  ) : (
+                    <span className="absolute top-3 right-3 bg-blue-gray-300 text-white text-xs font-bold px-2 py-1 rounded-full">
                       {product.availableQuantity} left
                     </span>
-                }
+                  )}
                 </CardHeader>
                 <CardBody className="pt-3 pb-1">
                   <div className="flex justify-between items-start mb-2">
@@ -135,7 +130,6 @@ const ShowProducts = ({ products, handleAddToCart, category }) => {
 };
 
 export default ShowProducts;
-
 
 /**
  

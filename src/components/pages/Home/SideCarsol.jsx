@@ -18,7 +18,7 @@ const SideCarsol = () => {
             Categories
           </div>
           <List className="divide-y divide-gray-200">
-            {["Furniture", "Electronics", "Food", "Women", "Men"].map(
+            {["Men", "Women", "Electronics", "Food", "Furniture"].map(
               (category, index) => (
                 <Link
                   key={index}

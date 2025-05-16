@@ -18,8 +18,24 @@ import {
 import { IoMdEye } from "react-icons/io";
 
 import { Link } from "react-router-dom";
+import { CartContext } from "../../../context/CartContext";
+import { useContext } from "react";
+export default function FlashSection({
+  timeLeft,
+  scrollContainer,
 
-export default function FlashSection({timeLeft,scrollContainer,products,isInWishlist,rated}) {
+  rated,
+}) {
+  const {
+    cart,
+    products,
+    cartCount,
+    wishlistCount,
+    addToCart,
+    addToWishlist,
+    isInWishlist,
+    setProducts,
+  } = useContext(CartContext);
   return (
     <div>
       <div className="flex flex-row">
@@ -79,7 +95,7 @@ export default function FlashSection({timeLeft,scrollContainer,products,isInWish
                     <button
                       aria-label="add product to wishlist"
                       className="rounded-full z-10"
-                      onClick={() => handleAddToWishlist(product)}
+                      onClick={() => addToWishlist(product)}
                     >
                       <FaHeart
                         className={`text-xl transition-transform hover:scale-110 ${
@@ -106,7 +122,7 @@ export default function FlashSection({timeLeft,scrollContainer,products,isInWish
                     <button
                       aria-label="add to cart"
                       className="absolute bottom-0 w-full bg-black text-white py-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => addToCart(product)}
                     >
                       <p>Add to Cart</p>
                     </button>

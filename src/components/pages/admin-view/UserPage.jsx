@@ -39,18 +39,44 @@ const UsersPage = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          // Retrieve the JWT token (e.g., from localStorage)
+          const token = localStorage.getItem("token"); // Adjust based on where you store the token
+
+          if (!token) {
+            Swal.fire(
+              "Error",
+              "No authentication token found. Please log in.",
+              "error"
+            );
+            return;
+          }
+
           const res = await fetch(`${import.meta.env.VITE_URL}/users/${id}`, {
             method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
           });
 
+          const data = await res.json();
+
           if (res.ok) {
-            Swal.fire("Deleted!", "User has been deleted.", "success");
-            fetchUsers();
+            Swal.fire(
+              "Deleted!",
+              data.message || "User has been deleted.",
+              "success"
+            );
+            fetchUsers(); // Refresh the user list
           } else {
-            Swal.fire("Error", "Failed to delete user", "error");
+            Swal.fire(
+              "Error",
+              data.message || "Failed to delete user",
+              "error"
+            );
           }
         } catch (err) {
-          console.error(err);
+          console.error("Delete error:", err);
           Swal.fire("Error", "Something went wrong", "error");
         }
       }
@@ -67,13 +93,18 @@ const UsersPage = () => {
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, promote",
     }).then(async (result) => {
+      console.log(user);
+
       if (result.isConfirmed) {
         try {
           const res = await fetch(
             `${import.meta.env.VITE_URL}/users/${user._id}`,
             {
               method: "PATCH",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+              },
+
               body: JSON.stringify({ role: "admin" }),
             }
           );

@@ -16,7 +16,7 @@ const Product = () => {
 
   useEffect(() => {
     axios
-      .get(`https://gioco-rx7d.vercel.app/api/products`)
+      .get(`${import.meta.env.VITE_URL}/products`)
       .then((res) => {
         if (res.data != null) {
           let filteredProducts = res.data;
