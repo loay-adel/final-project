@@ -1,11 +1,5 @@
 import { List, ListItem, Card } from "@material-tailwind/react";
-import {
-  Carousel,
-  IconButton,
-  Rating,
-  Typography,
-  Button,
-} from "@material-tailwind/react";
+import { Carousel, Rating, Button } from "@material-tailwind/react";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -13,15 +7,9 @@ import {
   FaShippingFast,
   FaHeadset,
   FaArrowUp,
-} from "react-icons/fa";
-import {
-  FaMobile,
   FaLaptop,
-  FaHeadphones,
-  FaCamera,
-  FaGamepad,
-  FaApple,
 } from "react-icons/fa";
+
 import { IoFastFood } from "react-icons/io5";
 import { IoIosWoman, IoIosMan } from "react-icons/io";
 import { FaHouse } from "react-icons/fa6";
@@ -50,18 +38,50 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   const categories = [
-    { name: "Food", icon: <IoFastFood className="text-3xl" /> },
-    { name: "Women", icon: <IoIosWoman className="text-3xl" /> },
     { name: "Men", icon: <IoIosMan className="text-3xl" /> },
-    { name: "Furnture", icon: <FaHouse className="text-3xl" /> },
+    { name: "Women", icon: <IoIosWoman className="text-3xl" /> },
     { name: "Electronics", icon: <FaLaptop className="text-3xl" /> },
+    { name: "Food", icon: <IoFastFood className="text-3xl" /> },
+    { name: "furniture", icon: <FaHouse className="text-3xl" /> },
   ];
 
   const targetDate = new Date("2025-05-29T23:59:59");
   const [timeLeft, setTimeLeft] = useState(getTimeLeft(targetDate));
 
   const scrollContainer = useRef(null);
+  const StarRating = ({ rating, maxRating = 5 }) => {
+    return (
+      <div className="flex items-center">
+        {Array.from({ length: maxRating }).map((_, index) => {
+          const filled = index < Math.floor(rating);
+          const halfFilled =
+            !filled && index < Math.ceil(rating) && rating % 1 !== 0;
 
+          return (
+            <svg
+              key={index}
+              className={`w-4 h-4 ${
+                filled || halfFilled ? "text-yellow-700" : "text-gray-300"
+              }`}
+              fill={filled ? "currentColor" : "none"}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+              />
+            </svg>
+          );
+        })}
+        <span className="ml-1 text-sm text-gray-500">
+          {rating?.toFixed(1) || 0}
+        </span>
+      </div>
+    );
+  };
   const handleAddToCart = (product) => {
     addToCart(product);
     Swal.fire({
@@ -279,7 +299,7 @@ const Home = () => {
       </div>
 
       {/* Flash Sales Section */}
-      <div className="md:mt-40">
+      <div className="md:mt-40" id="FlashSale">
         <div className="flex flex-row">
           <span className="d-block bg-main rounded w-6 ml-2 md:ml-0"></span>
           <h1 className="text-4xl text-main ml-2.5 font-mainFont">Today's</h1>
@@ -348,12 +368,16 @@ const Home = () => {
                           }`}
                         />
                       </button>
-                      <button
+                      <Link
+                        to={`show-products/${product.category.toLowerCase()}/${
+                          product._id
+                        }`}
                         aria-label="show product"
                         className="rounded-full z-10"
+                        onClick={() => {}}
                       >
                         <IoMdEye className="text-2xl hover:scale-110" />
-                      </button>
+                      </Link>
                     </div>
                     <div className="h-[100%] flex items-center justify-center relative">
                       <img
@@ -383,14 +407,7 @@ const Home = () => {
                       </p>
                     </div>
                     <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                      ({rated})
-                      <Rating
-                        unratedColor="gray"
-                        value={4}
-                        ratedColor="amber"
-                        onChange={(value) => setRated(value)}
-                        className="mr-2"
-                      />
+                      <StarRating rating={product.rating} />
                     </div>
                   </div>
                 </div>
@@ -448,7 +465,7 @@ const Home = () => {
           </div>
         </div>
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 ">
             {categories.map((category, index) => (
               <Link
                 key={index}
@@ -504,9 +521,16 @@ const Home = () => {
                     }`}
                   />
                 </button>
-                <button aria-label="show product" className="rounded-full z-10">
+                <Link
+                  to={`show-products/${product.category.toLowerCase()}/${
+                    product._id
+                  }`}
+                  aria-label="show product"
+                  className="rounded-full z-10"
+                  onClick={() => {}}
+                >
                   <IoMdEye className="text-2xl hover:scale-110" />
-                </button>
+                </Link>
               </div>
               <div className="h-[100%] flex items-center justify-center relative">
                 <img
@@ -532,14 +556,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                ({rated})
-                <Rating
-                  unratedColor="gray"
-                  value={4}
-                  ratedColor="amber"
-                  onChange={(value) => setRated(value)}
-                  className="mr-2"
-                />
+                <StarRating rating={product.rating} />
               </div>
             </div>
           </div>
@@ -556,12 +573,14 @@ const Home = () => {
                 Limited Time Offer!
               </h2>
               <p className="mt-3 text-lg text-purple-100">
-                Get 50% off on all premium plans. Upgrade now and unlock
-                exclusive features.
+                Hurry up! grap your opportunity on our flsahs sale before it
+                ends
               </p>
-              <button className="mt-6 px-6 py-3 bg-white text-purple-600 font-medium rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg">
-                Claim Your Discount
-              </button>
+              <a href="#FlashSale">
+                <button className="mt-6 px-6 py-3 bg-white text-purple-600 font-medium rounded-lg hover:bg-gray-100 transition duration-300 shadow-lg">
+                  my opportunity
+                </button>
+              </a>
             </div>
 
             {/* Countdown Timer */}
@@ -641,9 +660,16 @@ const Home = () => {
                     }`}
                   />
                 </button>
-                <button aria-label="show product" className="rounded-full z-10">
+                <Link
+                  to={`show-products/${product.category.toLowerCase()}/${
+                    product._id
+                  }`}
+                  aria-label="show product"
+                  className="rounded-full z-10"
+                  onClick={() => {}}
+                >
                   <IoMdEye className="text-2xl hover:scale-110" />
-                </button>
+                </Link>
               </div>
               <div className="h-[100%] flex items-center justify-center relative">
                 <img
@@ -669,14 +695,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="flex flex-row-reverse text-gray-400 font-bold items-center">
-                ({rated})
-                <Rating
-                  unratedColor="gray"
-                  value={4}
-                  ratedColor="amber"
-                  onChange={(value) => setRated(value)}
-                  className="mr-2"
-                />
+                <StarRating rating={product.rating} />
               </div>
             </div>
           </div>
@@ -736,7 +755,13 @@ const Home = () => {
                 Featured woman collections that give you another vibe
               </p>
               <button className="bg-white text-black px-3 py-2 rounded text-sm hover:bg-gray-200">
-                Shop Now
+                <Link
+                  to={`show-products/women`}
+                  aria-label="show product"
+                  className="rounded-full z-10"
+                >
+                  Shop Now
+                </Link>
               </button>
             </div>
           </div>

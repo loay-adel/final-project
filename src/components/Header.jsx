@@ -23,15 +23,8 @@ const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
 
-  const {
-    cartCount,
-    wishlistCount,
-    user,
-    setUser,
-    fetchUserData,
-    setCart,
-    cart,
-  } = useContext(CartContext);
+  const { wishlistCount, user, setUser, fetchUserData, setCart, cart } =
+    useContext(CartContext);
 
   const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
 
@@ -74,7 +67,6 @@ const Header = () => {
             setCart(userData.cart || []);
             setUser(userData);
           } else {
-            // fallback إذا المستخدم مش موجود
             setIsAuthenticatedState(false);
             setUser(null);
             localStorage.removeItem("token");
@@ -273,7 +265,7 @@ const Header = () => {
               <Link to="/cart">
                 <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
               </Link>
-              {user && cart.length > 0 && (
+              {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
                   {cart.length}
                 </span>
