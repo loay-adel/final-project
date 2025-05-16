@@ -248,7 +248,7 @@ const Cart = () => {
                 <>
                   <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
                     <Link
-                      to="/show-product"
+                      to="/show-products"
                       className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-center transition"
                     >
                       Return To Shoping
