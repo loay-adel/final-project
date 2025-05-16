@@ -25,7 +25,7 @@ import { jwtDecode } from "jwt-decode";
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const navigate = useNavigate();
-  const { cartCount, wishlistCount , user , setUser } = useContext(CartContext);
+  const { cartCount, wishlistCount , user , setUser ,fetchUserData ,setCart,cart} = useContext(CartContext);
   const [isAuthenticatedState, setIsAuthenticatedState] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,41 +37,39 @@ const Header = () => {
 
 
       
-        
-      
+  useEffect(() => {
+  const init = async () => {
+    const token = localStorage.getItem("token");
 
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const userData = await fetchUserData(decoded._id);
 
-
-useEffect(() => {
-  const token = localStorage.getItem("token");
- 
-
-  if (token) {
-    try {
-      const decoded = jwtDecode(token); 
-      setIsAuthenticatedState(true);
-      setUser({
-        firstName: decoded.firstName || "User",
-        email: decoded.email,
-        role: decoded.role,
-        addresses: decoded.addresses || [],
-        wishlist: decoded.wishlist || [],
-        cart: decoded.cart || [],
-        _id: decoded._id,
-      });
-
-    } catch (error) {
-    
+        if (userData) {
+          setIsAuthenticatedState(true);
+          setCart(userData.cart || []);
+          setUser(userData);
+        } else {
+          // fallback إذا المستخدم مش موجود
+          setIsAuthenticatedState(false);
+          setUser(null);
+          localStorage.removeItem("token");
+        }
+      } catch (error) {
+        setIsAuthenticatedState(false);
+        setUser(null);
+        localStorage.removeItem("token");
+      }
+    } else {
       setIsAuthenticatedState(false);
       setUser(null);
-      localStorage.removeItem("token"); 
     }
-  } else {
-    
-    setIsAuthenticatedState(false);
-    setUser(null); 
-  }
+  };
+
+  init();
 }, []);
+
 console.log(user);
 
   // Check authentication status on mount
@@ -253,9 +251,9 @@ console.log(user);
               <Link to="/cart">
                 <IoCartOutline className="text-3xl hover:scale-105 hover:cursor-pointer" />
               </Link>
-              {cartCount > 0 && (
+             {user && cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  {cartCount}
+                  {cart.length}
                 </span>
               )}
             </div>
@@ -274,7 +272,7 @@ console.log(user);
                     <FiUser />
                     <Typography variant="small" className="font-medium">
                       <Link to="/account">
-                        My Profile {user.firstName}
+                        {user && <span>Welcome, {user.firstName}</span>}
                       </Link>
                     </Typography>
                   </MenuItem>
