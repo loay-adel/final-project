@@ -15,7 +15,7 @@ const Signin = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { setUser } = useContext(CartContext);
-
+const APIURl = import.meta.env.VITE_API_URL;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
@@ -56,7 +56,7 @@ const Signin = () => {
           "Content-Type": "application/json",
         },
         method: "post",
-        url: "https://gioco-rx7d.vercel.app/api/users/login",
+        url: `${APIURl}users/login`,
         data: credentials,
       });
 

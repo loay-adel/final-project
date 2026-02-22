@@ -31,7 +31,7 @@ function Dashboard() {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch(`${import.meta.env.VITE_URL}/users`)
+    fetch(`${import.meta.env.VITE_URL}users`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);

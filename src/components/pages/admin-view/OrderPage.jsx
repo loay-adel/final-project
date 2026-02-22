@@ -6,7 +6,7 @@ const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_URL}/orders`)
+    fetch(`${import.meta.env.VITE_API_URL}orders`)
       .then((res) => res.json())
       .then((data) => {
         setOrders(data);
@@ -30,7 +30,7 @@ const OrdersPage = () => {
     if (confirmed.isConfirmed) {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_URL}/orders/${orderId}`,
+          `${import.meta.env.VITE_API_URL}orders/${orderId}`,
           {
             method: "PATCH",
             headers: {

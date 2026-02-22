@@ -47,7 +47,7 @@ const Checkout = () => {
       });
     }
   };
-
+  
   return (
     <>
       <div className="container mx-auto p-5">
@@ -149,7 +149,7 @@ const Checkout = () => {
             {cart.length > 0 ? (
               cart.map((item) => (
                 <div
-                  key={item.id}
+                  key={item._id}
                   className="flex items-center justify-between mb-4"
                 >
                   <div className="flex items-center justify-between space-x-3">

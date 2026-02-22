@@ -7,70 +7,124 @@ import ShowProduct from "./ShowProduct";
 import ShowProducts from "./ShowProducts";
 
 const Product = () => {
-  const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState(null);
-  const [allProduct, setAllProduct] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const { category, id } = useParams();
   const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    const url = `${import.meta.env.VITE_API_URL}products`.replace(/\/+$/, "");
+
     axios
-      .get(`${import.meta.env.VITE_URL}/products`)
+      .get(url)
       .then((res) => {
-        if (res.data != null) {
-          let filteredProducts = res.data;
+        // Handle different possible response shapes
+        let productsData = [];
 
-          if (category) {
-            filteredProducts = filteredProducts.filter(
-              (product) => product.category === category
-            );
-          }
+        if (Array.isArray(res.data)) {
+          productsData = res.data;
+        } else if (res.data?.products && Array.isArray(res.data.products)) {
+          productsData = res.data.products;
+        } else if (res.data?.data && Array.isArray(res.data.data)) {
+          productsData = res.data.data;
+        }
 
-          if (id) {
-            const productById = filteredProducts.find(
-              (product) => product._id === id
-            );
-            if (productById) {
-              setProduct(productById);
-            }
-          }
+        setAllProducts(productsData);
 
-          setAllProduct(res.data);
-          setProducts(filteredProducts);
+        // Filter by category (case-insensitive)
+        let temp = productsData;
+        if (category) {
+          const target = category.trim().toLowerCase();
+          temp = productsData.filter((p) =>
+            p.category?.trim?.().toLowerCase() === target
+          );
+        }
+
+        setFilteredProducts(temp);
+
+        // Single product → always search in full list
+        if (id) {
+          const found = productsData.find((p) => p._id === id);
+          setSelectedProduct(found || null);
         }
       })
-      .catch((e) => console.log(e));
+      .catch((err) => {
+        console.error("Failed to load products:", err);
+        setError("Could not load products. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [category, id]);
 
   const handleAddToCart = (product) => {
+    if (!product) return;
+
     addToCart(product);
+
     Swal.fire({
-      title: "Product Added to Cart!",
-      text: `${product.title} has been successfully added to your shopping cart.`,
+      title: "Added to Cart!",
+      text: `${product.title} has been added successfully.`,
       icon: "success",
-      showConfirmButton: false,
-      timer: 1500,
-      position: "bottom-end",
       toast: true,
+      position: "bottom-end",
+      showConfirmButton: false,
+      timer: 1800,
+      timerProgressBar: true,
       background: "#48bb78",
       color: "white",
     });
   };
 
+  // ────────────────────────────────────────────────
+  //                  RENDER
+  // ────────────────────────────────────────────────
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "100px 20px" }}>
+        <div className="spinner" style={{ margin: "0 auto" }} />
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ textAlign: "center", padding: "80px 20px", color: "#e53e3e" }}>
+        <h2>Oops!</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       {id ? (
-        <ShowProduct product={product} handleAddToCart={handleAddToCart} />
-      ) : category ? (
-        <ShowProducts
-          products={products}
-          handleAddToCart={handleAddToCart}
-          category={category}
-        />
+        selectedProduct ? (
+          <ShowProduct
+            product={selectedProduct}
+            handleAddToCart={handleAddToCart}
+          />
+        ) : (
+          <div style={{ textAlign: "center", padding: "100px 20px" }}>
+            <h2>Product not found</h2>
+            <p>The product with ID <strong>{id}</strong> could not be found.</p>
+            <a href="/products" style={{ color: "#3182ce", textDecoration: "underline" }}>
+              ← Back to all products
+            </a>
+          </div>
+        )
       ) : (
         <ShowProducts
-          products={allProduct}
+          products={category ? filteredProducts : allProducts}
           handleAddToCart={handleAddToCart}
           category={category}
         />

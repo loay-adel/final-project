@@ -12,7 +12,7 @@ const Wishlist = () => {
   const [wishlistProducts, setWishlistProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useContext(CartContext);
-  const APIURl = import.meta.env.VITE_URL;
+  const APIURl = import.meta.env.VITE_API_URL;
   // Get current user ID from localStorage
   const getCurrentUserId = () => {
     return localStorage.getItem("userId");
@@ -31,7 +31,7 @@ const Wishlist = () => {
 
     if (userId && currentUser) {
       try {
-        await fetch(`${APIURl}/users/${userId}`, {
+        await fetch(`${APIURl}users/${userId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const Wishlist = () => {
       if (!userId) return;
 
       try {
-        const response = await fetch(`${APIURl}/users/${userId}`);
+        const response = await fetch(`${APIURl}users/${userId}`);
         const userData = await response.json();
         setCurrentUser(userData);
       } catch (error) {
@@ -64,7 +64,7 @@ const Wishlist = () => {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${APIURl}/products`);
+        const response = await fetch(`${APIURl}products`);
         const data = await response.json();
 
         if (!Array.isArray(data)) {
@@ -114,7 +114,7 @@ const Wishlist = () => {
     // Refresh user data if logged in
     if (currentUser) {
       try {
-        const response = await fetch(`${APIURl}/users/${currentUser.id}`);
+        const response = await fetch(`${APIURl}users/${currentUser.id}`);
         const userData = await response.json();
         setCurrentUser(userData);
       } catch (error) {

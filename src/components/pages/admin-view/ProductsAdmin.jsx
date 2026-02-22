@@ -25,7 +25,7 @@ const ProductsAdmin = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_URL}/products`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}products`);
         if (!response.ok) throw new Error("Failed to fetch products");
 
         const data = await response.json();
@@ -70,7 +70,7 @@ const ProductsAdmin = () => {
         setProducts((prev) => prev.filter((p) => p.id !== productId));
 
         const response = await fetch(
-          `${import.meta.env.VITE_URL}/products/${encodeURIComponent(
+          `${import.meta.env.VITE_API_URL}products/${encodeURIComponent(
             category
           )}/${productId}`,
           { method: "DELETE" }
@@ -155,9 +155,8 @@ const ProductsAdmin = () => {
       };
       setProducts((prev) => [...prev, productToAdd]);
       console.log("🚀 Product being sent:", productToSend);
-      //${import.meta.env.VITE_URL}/products
 
-      const response = await fetch(`http://localhost:7000/api/products`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

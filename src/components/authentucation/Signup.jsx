@@ -1,4 +1,3 @@
-// src/components/Signup.jsx
 import { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,7 +15,8 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const APIURl = import.meta.env.VITE_API_URL;
+  
   const validateForm = () => {
     const newErrors = {};
 
@@ -75,7 +75,7 @@ const Signup = () => {
           "Content-Type": "application/json",
         },
         method: "post",
-        url: "https://gioco-rx7d.vercel.app/api/users/register",
+        url: `${APIURl}users/register`,
         data: formData,
       });
 

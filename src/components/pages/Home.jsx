@@ -25,7 +25,6 @@ import axios from "axios";
 const Home = () => {
   const {
     products,
-
     addToCart,
     addToWishlist,
     isInWishlist,
@@ -33,7 +32,6 @@ const Home = () => {
   } = useContext(CartContext);
   const isDisabled = true;
   const [showArrowUP, setShowArrowUP] = useState(false);
-  const [rated, setRated] = useState(4);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -115,10 +113,11 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_URL}/products`
+          `${import.meta.env.VITE_API_URL}products`
         );
 
         const products = response.data;
+        console.log(`${import.meta.env.VITE_API_URL}products`)
 
         if (!Array.isArray(products)) {
           throw new Error("Invalid API response - expected an array");
